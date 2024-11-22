@@ -45,4 +45,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function tools(){
+        return $this->hasMany(UserTool::class);
+    }
 }
