@@ -112,6 +112,9 @@
         <div class="info-card">
             <h1>More exchange messages</h1>
             <p>Like discord and other things</p>
+            <a href="{{ url('login/discord') }}">
+                <button>Login with Discord</button>
+            </a>
         </div>
 
         <!-- Second Info Card -->
@@ -169,13 +172,6 @@
             const taskItem = document.querySelector(`[data-task-id="${taskId}"]`);
             if (taskItem) {
                 taskItem.classList.toggle('completed', checkbox.checked);
-            }
-        }
-
-        function deleteTask(taskId) {
-            const taskItem = document.querySelector(`[data-task-id="${taskId}"]`);
-            if (taskItem) {
-                taskItem.remove();
             }
         }
     </script>
