@@ -49,4 +49,8 @@ class User extends Authenticatable
     public function tools(){
         return $this->hasMany(UserTool::class);
     }
+
+    public function calenders(){
+        return $this-hasOne(Calenders::class);
+    }
 }
