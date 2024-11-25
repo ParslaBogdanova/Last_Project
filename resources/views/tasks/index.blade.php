@@ -106,15 +106,19 @@
             {{ __('Tasks') }}
         </h2>
     </x-slot>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Calender') }}
+        </h2>
+    </x-slot>
 
     <main class="main-content">
-        <!-- First Info Card -->
         <div class="info-card">
             <h1>More exchange messages</h1>
             <p>Like discord and other things</p>
-            <a href="{{ url('login/discord') }}">
+            {{-- <a href="{{ url('login/discord') }}">
                 <button>Login with Discord</button>
-            </a>
+            </a> --}}
         </div>
 
         <!-- Second Info Card -->
