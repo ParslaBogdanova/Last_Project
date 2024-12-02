@@ -10,7 +10,6 @@ class Day extends Model
     use HasFactory;
 
     protected $fillable = [
-        'calender_id',
         'date',
     ];
 

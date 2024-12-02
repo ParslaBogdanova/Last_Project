@@ -13,13 +13,8 @@ return new class extends Migration
     {
         Schema::create('days', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('calendar_id');
-            $table->date('date');
-            $table->string('day_name');
-            $table->integer('week');
+            $table->date('date')->unique();
             $table->timestamps();
-
-            $table->foreign('calendar_id')->references('id')->on('calendars')->onDelete('cascade');
         });
     }
 
