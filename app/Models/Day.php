@@ -12,15 +12,13 @@ class Day extends Model
     protected $fillable = [
         'calender_id',
         'date',
-        'day_name',
-        'week',
     ];
 
     public function calenders(){
-        return $this->belongTo(Calenders::class);
+        return $this->belongsTo(Calenders::class);
     }
 
     public function schedules(){
-        return $this->hasMany(Scedule::class); //Zinu.. drukas kļūda T-T
+        return $this->hasMany(Schedule::class); 
     }
 }
