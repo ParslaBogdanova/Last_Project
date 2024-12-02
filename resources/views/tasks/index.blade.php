@@ -121,13 +121,11 @@
             </a> --}}
         </div>
 
-        <!-- Second Info Card -->
         <div class="unread-messages">
             <h1>Unread messages</h1>
             <p>This will be after only i create a friends list.</p>
         </div>
 
-        <!-- Task List -->
         <div class="task-info">
             <h1>Task List</h1>
             <div class="task-list" id="task-list">
@@ -150,7 +148,6 @@
                 @endforeach
             </div>
 
-            <!-- Create Task Form -->
             <form id="create-task-form" class="task-form hidden" action="{{ route('tasks.store') }}" method="POST">
                 @csrf
                 <label for="description">Description:</label>
