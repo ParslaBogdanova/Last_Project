@@ -17,6 +17,7 @@ Route::get('/dashboard', function () {
 Route::resource('tasks', TaskController::class);
 Route::resource('calendar', CalendarController::class);
 
+
 // Route::get('login/{provider}', [SocialiteController::class, 'redirectToProvider']);
 // Route::get('login/{provider}/callback', [SocialiteController::class, 'handleProviderCallback']);
 
