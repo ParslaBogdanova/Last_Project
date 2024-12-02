@@ -2,64 +2,63 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Calender;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
 
 class CalendarController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return view('calendar.index');
+        $schedules = Schedule::all();
+        return view('calendar.index', ['schedules' => $schedules]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        \Log::info($request->all());
+
+        $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'color' => 'nullable|string',
+        ]);
+
+        Schedule::create([
+            'day_id' => $request->day_id,
+            'title' => $request->title,
+            'description' => $request->description,
+            'color' => $request->color,
+        ]);
+
+        return redirect()->route('calendar.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Calender $calender)
+    public function show(Schedule $schedule)
     {
-        //
+        return view('calendar.show', ['schedule' => $schedule]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Calender $calender)
+    public function update(Request $request, Schedule $schedule)
     {
-        //
+        $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'color' => 'nullable|string',
+        ]);
+
+        $schedule->update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'color' => $request->color,
+        ]);
+
+        return redirect()->route('calendar.index');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Calender $calender)
+    public function destroy(Schedule $schedule)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Calender $calender)
-    {
-        //
+        $schedule->delete();
+        return redirect()->route('calendar.index');
     }
 }
+

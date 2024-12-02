@@ -19,7 +19,7 @@ class Calender extends Model
         return $this->hasMany(Day::class);
     }
 
-    public function users(){
-        return $this->belongTo(User::class);
+    public function user(){
+        return $this->belongsTo(User::class);
     }
 }
