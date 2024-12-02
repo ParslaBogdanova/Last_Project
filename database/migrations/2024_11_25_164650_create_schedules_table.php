@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('scedules', function (Blueprint $table) {
+        Schema::create('schedules', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('day_id');
+            $table->integer('day_id');
             $table->string('title');
-            $table->time('start_time');
-            $table->string('am_pm');
-            $table->string('meeting_link')->nullable();
+            $table->text('description');
+            $table->string('color')->nullable();
             $table->timestamps();
 
             $table->foreign('day_id')->references('id')->on('days')->onDelete('cascade');
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('scedules');
+        Schema::dropIfExists('schedules');
     }
 };

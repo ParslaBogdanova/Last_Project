@@ -5,16 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Scedule extends Model
+class Schedule extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'day_id',
+        'description',
         'title',
-        'start_time',
-        'am_pm',
-        'meeting_link'
+        'day_id',
+        'color',
     ];
 
     public function day(){
