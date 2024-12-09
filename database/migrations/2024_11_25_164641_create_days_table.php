@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('days', function (Blueprint $table) {
             $table->id();
-            $table->date('date')->unique();
+            $table->integer('day_id');
+            $table->integer('month');
+            $table->integer('year');
             $table->timestamps();
         });
     }
