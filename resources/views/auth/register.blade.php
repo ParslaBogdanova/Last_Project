@@ -81,7 +81,7 @@
         @csrf
 
         <!-- Name -->
-        <div class ="form-group">
+        <div class="form-group">
             <x-input-label for="name" class="input-label" />
             <x-text-input id="name" class="info-input" type="text" name="name" :value="old('name')" required
                 autofocus autocomplete="name" placeholder="Name" />
@@ -90,7 +90,7 @@
 
         <!-- Email Address -->
         <div class="form-group">
-            <x-input-label for="email" class="input-label"></x-input-label>
+            <x-input-label for="email" class="input-label" />
             <x-text-input id="email" class="info-input" type="email" name="email" value="{{ old('email') }}"
                 required autocomplete="username" placeholder="Email" />
             <x-input-error :messages="$errors->get('email')" class="input-error" />
@@ -98,7 +98,7 @@
 
         <!-- Password -->
         <div class="form-group">
-            <x-input-label for="password" class="input-label"></x-input-label>
+            <x-input-label for="password" class="input-label" />
             <x-text-input id="password" class="info-input" type="password" name="password" required
                 autocomplete="new-password" placeholder="Password" />
             <x-input-error :messages="$errors->get('password')" class="input-error" />
@@ -106,7 +106,7 @@
 
         <!-- Confirm Password -->
         <div class="form-group">
-            <x-input-label for="password_confirmation" class="input-label"></x-input-label>
+            <x-input-label for="password_confirmation" class="input-label" />
             <x-text-input id="password_confirmation" class="info-input" type="password" name="password_confirmation"
                 required autocomplete="new-password" placeholder="Confirm Password" />
             <x-input-error :messages="$errors->get('password_confirmation')" class="input-error" />
@@ -120,6 +120,7 @@
             </div>
 
             <div>
+                <!-- Submit Button -->
                 <x-primary-button class="button">
                     {{ __('Sign Up') }}
                 </x-primary-button>

@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\DayController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\Auth\SocialiteController;
 
 Route::get('/', function () {
@@ -15,12 +17,10 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::resource('tasks', TaskController::class);
-Route::resource('calendar', CalendarController::class);
-
-
-// Route::get('login/{provider}', [SocialiteController::class, 'redirectToProvider']);
-// Route::get('login/{provider}/callback', [SocialiteController::class, 'handleProviderCallback']);
-
+Route::get('/calendar/{month?}/{year?}', [DayController::class, 'index'])->name('calendar.index');
+Route::get('/calendar/day/{dayId}', [DayController::class, 'show'])->name('calendar.day');
+Route::get('/calendar/day/{date}/schedules', [ScheduleController::class, 'getSchedulesForDay']);
+Route::post('/calendar/day/{date}/schedule/store', [ScheduleController::class, 'store'])->name('schedule.store'); // Updated route
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
