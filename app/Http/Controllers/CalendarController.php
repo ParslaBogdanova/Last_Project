@@ -2,63 +2,45 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
+use App\Models\Day;
 
 class CalendarController extends Controller
 {
-    public function index()
+    public function index($month = null, $year = null)
     {
-        $schedules = Schedule::all();
-        return view('calendar.index', ['schedules' => $schedules]);
-    }
-
-    public function store(Request $request)
-    {
-        \Log::info($request->all());
-
-        $request->validate([
-            'title' => 'required|string',
-            'description' => 'required|string',
-            'color' => 'nullable|string',
+        $daysInMonth = Carbon::create($year, $month)->daysInMonth;
+        $days = [];
+    
+        // Loop through each day of the month
+        for ($i = 1; $i <= $daysInMonth; $i++) {
+            $dayDate = Carbon::create($year, $month, $i)->toDateString();
+            // Fetch schedules for this day
+            $schedules = Schedule::whereDate('date', $dayDate)->get();
+            
+            // Add day data with schedules to the $days array
+            $days[] = [
+                'date' => $dayDate,
+                'schedules' => $schedules
+            ];
+        }
+    
+        // Return the view with data
+        return view('calendar.index', [
+            'days' => $days,
+            'month' => $month,
+            'year' => $year,
+            'today' => $today
         ]);
-
-        Schedule::create([
-            'day_id' => $request->day_id,
-            'title' => $request->title,
-            'description' => $request->description,
-            'color' => $request->color,
-        ]);
-
-        return redirect()->route('calendar.index');
     }
+    public function getDaySchedules($dayId)
+{
+    // Fetch all schedules for the given day (in 'dayId' format)
+    $schedules = Schedule::whereDate('date', $dayId)->get();
 
-    public function show(Schedule $schedule)
-    {
-        return view('calendar.show', ['schedule' => $schedule]);
-    }
-
-    public function update(Request $request, Schedule $schedule)
-    {
-        $request->validate([
-            'title' => 'required|string',
-            'description' => 'required|string',
-            'color' => 'nullable|string',
-        ]);
-
-        $schedule->update([
-            'title' => $request->title,
-            'description' => $request->description,
-            'color' => $request->color,
-        ]);
-
-        return redirect()->route('calendar.index');
-    }
-
-    public function destroy(Schedule $schedule)
-    {
-        $schedule->delete();
-        return redirect()->route('calendar.index');
-    }
+    // Return the schedules as a JSON response
+    return response()->json(['schedules' => $schedules]);
 }
-
+}
