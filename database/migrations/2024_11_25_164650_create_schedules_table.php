@@ -13,11 +13,15 @@ return new class extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('day_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('day_id');
+            $table->unsignedBigInteger('user_id');
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('color', 7)->nullable();
             $table->timestamps();
+
+            $table->foreign('day_id')->references('id')->on('days')->onDelete('cascade');
+    $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
