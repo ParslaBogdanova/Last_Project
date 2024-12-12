@@ -19,6 +19,7 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
 Route::resource('tasks', TaskController::class);
+Route::patch('/tasks/{task}/update-completed', [TaskController::class, 'updateCompleted'])->name('tasks.update-completed');
 });
 
 Route::get('/calendar/{month?}/{year?}', [DayController::class, 'index'])->name('calendar.index');
