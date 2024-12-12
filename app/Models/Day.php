@@ -10,9 +10,8 @@ class Day extends Model
     use HasFactory;
 
     protected $fillable = [
-        'day_id',
-        'month',
-        'year',
+        'calendar_id',
+        'date',
     ];
 
     public function calenders(){
