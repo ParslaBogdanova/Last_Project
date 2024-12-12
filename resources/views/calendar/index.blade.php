@@ -60,9 +60,8 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 1rem;
             z-index: 1000;
-            display: flex;
-            justify-content: space-between;
             flex-direction: column;
+            justify-content: space-between;
         }
 
         .modal-header {
@@ -188,34 +187,35 @@
             <span id="modal-date"></span>
             <span class="modal-close" onclick="closeModal()">×</span>
         </div>
-        <div class="modal-body schedule-box-container">
-            <div class="schedule-list" id="schedule-list-container">
-                <p>Loading schedules...</p>
-            </div>
-
-            <div class="create-schedule-form" id="create-schedule-form-container">
-                <form id="create-schedule-form">
-                    <input type="hidden" id="schedule-day-id" name="day_id" value="">
-                    <div>
-                        <label for="schedule-title">Title</label>
-                        <input type="text" id="schedule-title" name="title" required>
-                    </div>
-                    <div>
-                        <label for="schedule-description">Description</label>
-                        <textarea id="schedule-description" name="description"></textarea>
-                    </div>
-                    <div>
-                        <label for="schedule-color">Color</label>
-                        <input type="color" id="schedule-color" name="color" value="#ffffff">
-                    </div>
-                    <button type="submit">Create Schedule</button>
-                </form>
-            </div>
-
-            <div class="add-schedule-btn-container" id="add-schedule-btn-container">
-                <button class="add-schedule-btn" id="add-schedule-btn" onclick="openCreateScheduleModal()">+</button>
-            </div>
+        <div class="schedule-list" id="schedule-list-container" style="display: none;">
+            <!-- Placeholder while loading -->
+            <p>Loading schedules...</p>
         </div>
+
+        <div class="create-schedule-form" id="create-schedule-form-container">
+            <form id="create-schedule-form">
+                @csrf
+                <input type="hidden" id="schedule-day-id" name="day_id" value="">
+                <div>
+                    <label for="schedule-title">Title</label>
+                    <input type="text" id="schedule-title" name="title" required>
+                </div>
+                <div>
+                    <label for="schedule-description">Description</label>
+                    <textarea id="schedule-description" name="description"></textarea>
+                </div>
+                <div>
+                    <label for="schedule-color">Color</label>
+                    <input type="color" id="schedule-color" name="color" value="#ffffff">
+                </div>
+                <button type="submit">Create Schedule</button>
+            </form>
+        </div>
+
+        <div class="add-schedule-btn-container" id="add-schedule-btn-container">
+            <button class="add-schedule-btn" id="add-schedule-btn" onclick="openCreateScheduleModal()">+</button>
+        </div>
+    </div>
     </div>
 
     <script>
@@ -226,9 +226,9 @@
         const createScheduleFormContainer = document.getElementById('create-schedule-form-container');
 
         function openModal(date) {
-            modalDate.innerText = `Date: ${date}`;
             modal.style.display = 'flex';
             modalBackdrop.style.display = 'block';
+            modalDate.innerText = `Date: ${date}`;
             document.getElementById('schedule-day-id').value = date;
             fetchSchedules(date);
         }
@@ -239,6 +239,9 @@
         }
 
         function fetchSchedules(date) {
+            scheduleListContainer.style.display = 'block';
+            scheduleListContainer.innerHTML = `<p>Loading schedules...</p>`;
+
             fetch(`/calendar/day/${date}/schedules`)
                 .then(response => response.json())
                 .then(data => {
@@ -247,14 +250,17 @@
                         let scheduleHtml = '';
                         schedules.forEach(schedule => {
                             scheduleHtml += `
-                        <div class="schedule-item" style="background-color: ${schedule.color};">
-                            ${schedule.title} - ${schedule.description}
-                        </div>`;
+                    <div class="schedule-item" style="background-color: ${schedule.color};">
+                        ${schedule.title} - ${schedule.description}
+                    </div>`;
                         });
                         scheduleListContainer.innerHTML = scheduleHtml;
                     } else {
                         scheduleListContainer.innerHTML = `<p>No schedules available for this day.</p>`;
                     }
+                })
+                .catch(() => {
+                    scheduleListContainer.innerHTML = `<p>Failed to load schedules. Please try again later.</p>`;
                 });
         }
 
@@ -265,54 +271,44 @@
 
         document.getElementById('create-schedule-form').addEventListener('submit', function(event) {
             event.preventDefault();
-            const dayId = document.getElementById('schedule-day-id').value;
-            const title = document.getElementById('schedule-title').value;
-            const description = document.getElementById('schedule-description').value;
-            const color = document.getElementById('schedule-color').value;
+            const formData = new FormData(this);
 
-            const formData = new FormData();
-            formData.append('day_id', dayId);
-            formData.append('title', title);
-            formData.append('description', description);
-            formData.append('color', color);
-
-            fetch(`/calendar/day/${dayId}/schedule/store`, {
+            fetch(`/calendar/day/${document.getElementById('schedule-day-id').value}/schedule/store`, {
                     method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
+                    body: formData
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        const newSchedule = data.schedule;
-                        const newScheduleHtml = `
-                <div class="schedule-item" style="background-color: ${newSchedule.color};">
-                    ${newSchedule.title} - ${newSchedule.description}
-                </div>`;
-                        scheduleListContainer.innerHTML += newScheduleHtml;
-                        createScheduleFormContainer.style.display = 'none';
-                        document.getElementById('add-schedule-btn-container').style.display = 'block';
+                        fetchSchedules(document.getElementById('schedule-day-id')
+                            .value);
+                        closeModal();
                     }
-                })
-                .catch(error => console.log(error));
+                });
         });
 
-        function changeMonth(direction) {
-            let currentMonth = {{ $month }};
-            let currentYear = {{ $year }};
-            currentMonth += direction;
+        function changeMonth(monthDelta) {
+            const currentDate = document.getElementById('month-year').innerText.split(' ');
+            const currentMonth = new Date(`${currentDate[0]} 1, ${currentDate[1]}`).getMonth();
+            const currentYear = parseInt(currentDate[1]);
 
-            if (currentMonth < 1) {
-                currentMonth = 12;
-                currentYear--;
-            } else if (currentMonth > 12) {
-                currentMonth = 1;
-                currentYear++;
+            let newMonth = currentMonth + monthDelta;
+            let newYear = currentYear;
+
+            if (newMonth < 0) {
+                newMonth = 11;
+                newYear--;
+            } else if (newMonth > 11) {
+                newMonth = 0;
+                newYear++;
             }
 
-            window.location.href = `/calendar/${currentMonth}/${currentYear}`;
+            const newMonthYear = new Date(newYear, newMonth).toLocaleString('default', {
+                month: 'long',
+                year: 'numeric'
+            });
+            document.getElementById('month-year').innerText = newMonthYear;
+            loadDays(newYear, newMonth);
         }
     </script>
 </x-app-layout>
