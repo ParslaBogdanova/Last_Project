@@ -166,30 +166,23 @@
         });
 
         function checkingTasks(checkbox, taskId) {
-            const taskItem = document.querySelector(`[data-task-id="${taskId}"]`);
             const completed = checkbox.checked;
 
+            const taskItem = document.querySelector(`[data-task-id="${taskId}"]`);
             if (taskItem) {
                 taskItem.classList.toggle('completed', completed);
             }
+
             fetch(`/tasks/${taskId}/update-completed`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        completed: completed
-                    })
-                }).then(response => response.json())
-                .then(data => {
-                    if (!data.success) {
-                        alert('Failed to update task status.');
-                    }
-                }).catch(err => {
-                    console.error('Error:', err);
-                    alert('Error updating task status.');
-                });
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    completed
+                })
+            }).catch(err => console.error('Error updating task status:', err));
         }
     </script>
 </x-app-layout>
