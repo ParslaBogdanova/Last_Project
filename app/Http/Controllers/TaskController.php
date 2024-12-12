@@ -47,4 +47,15 @@ public function edit($id)
         $task->delete();
         return redirect()->route('tasks.index');
     }
+    public function updateCompleted(Request $request, Task $task)
+{
+    $validated = $request->validate([
+        'completed' => 'required|boolean',
+    ]);
+
+    $task->completed = $validated['completed'];
+    $task->save();
+
+    return response()->json(['success' => true]);
+}
 }
