@@ -128,7 +128,8 @@
                     <div class="task-item" data-task-id="{{ $task->id }}">
 
                         <input type="checkbox" class="rounded checkbox"
-                            onchange="checkingTasks(this, {{ $task->id }})">
+                            onchange="checkingTasks(this, {{ $task->id }})"
+                            @if ($task->completed) checked @endif>
 
                         <a href="{{ route('tasks.show', $task->id) }}">
                             {{ $task->description }}
@@ -166,9 +167,32 @@
 
         function checkingTasks(checkbox, taskId) {
             const taskItem = document.querySelector(`[data-task-id="${taskId}"]`);
+            const completed = checkbox.checked;
+
+            // Update the visual style
             if (taskItem) {
-                taskItem.classList.toggle('completed', checkbox.checked);
+                taskItem.classList.toggle('completed', completed);
             }
+
+            // Send the update request to the server
+            fetch(`/tasks/${taskId}/update-completed`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        completed: completed
+                    })
+                }).then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        alert('Failed to update task status.');
+                    }
+                }).catch(err => {
+                    console.error('Error:', err);
+                    alert('Error updating task status.');
+                });
         }
     </script>
 </x-app-layout>
