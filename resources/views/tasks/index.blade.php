@@ -169,12 +169,9 @@
             const taskItem = document.querySelector(`[data-task-id="${taskId}"]`);
             const completed = checkbox.checked;
 
-            // Update the visual style
             if (taskItem) {
                 taskItem.classList.toggle('completed', completed);
             }
-
-            // Send the update request to the server
             fetch(`/tasks/${taskId}/update-completed`, {
                     method: 'PATCH',
                     headers: {
