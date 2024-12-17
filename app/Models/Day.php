@@ -10,15 +10,15 @@ class Day extends Model
     use HasFactory;
 
     protected $fillable = [
-        'calendar_id',
         'date',
+        'calendar_id',
     ];
 
-    public function calenders(){
-        return $this->belongsTo(Calenders::class);
+    public function calendar(){
+        return $this->belongsTo(Calendar::class);
     }
 
     public function schedules(){
-        return $this->hasMany(Schedule::class); 
+        return $this->hasMany(Schedule::class, 'day_id');
     }
 }

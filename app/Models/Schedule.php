@@ -10,19 +10,21 @@ class Schedule extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
         'description',
         'title',
-        'day_id',
         'color',
+        'user_id',
+        'day_id',
     ];
 
-    public function day(){
-        return $this->belongsTo(Day::class);
-    }
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function day()
+    {
+        return $this->belongsTo(Day::class);
     }
 
 }
