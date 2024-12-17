@@ -2,47 +2,106 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
+use App\Models\Calendar;
+use App\Models\Day;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
-use App\Models\Day;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class CalendarController extends Controller
 {
     public function index($month = null, $year = null)
     {
+        $currentDate = \Carbon\Carbon::now();
         $month = $month ?? Carbon::now()->month;
         $year = $year ?? Carbon::now()->year;
-
-        $daysInMonth = Carbon::create($year, $month)->daysInMonth;
-        $days = [];
-
-        for ($i = 1; $i <= $daysInMonth; $i++) {
-            $dayDate = Carbon::create($year, $month, $i)->toDateString();
-            $schedules = Schedule::whereDate('date', $dayDate)->get();
-
-            $days[] = [
-                'date' => $dayDate,
-                'schedules' => $schedules
-            ];
+    
+        $calendar = Calendar::where('year', $year)->where('month', $month)
+        ->where('user_id', Auth::id())->first();
+        
+        if (!$calendar) {
+            $calendar = Calendar::create([
+                'year' => $year,
+                'month' => $month,
+                'user_id' => Auth::id(),
+            ]);
+            $this->generateDaysForMonth($calendar);
         }
+    
+        $prevMonth = $month == 1 ? 12 : $month - 1;
+        $prevYear = $month == 1 ? $year - 1 : $year;
+        $nextMonth = $month == 12 ? 1 : $month + 1;
+        $nextYear = $month == 12 ? $year + 1 : $year;
+    
+        $days = $calendar->days;
 
-        $today = Carbon::today()->toDateString();
-
+        $schedules = Schedule::whereIn('day_id', $days->pluck('id'))
+        ->where('user_id', Auth::id())->get();
+    
         return view('calendar.index', [
+            'calendar' => $calendar,
             'days' => $days,
-            'month' => $month,
+            'schedules' => $schedules,
+            'prevMonth' => $prevMonth,
+            'prevYear' => $prevYear,
+            'nextMonth' => $nextMonth,
+            'nextYear' => $nextYear,
             'year' => $year,
-            'today' => $today
+            'month' => $month,
         ]);
     }
 
-    public function getDaySchedules($dayId)
+    public function createSchedule(Request $request, $month, $year)
+{
+    // Now, we're using the 'day_id' from the form
+    $dayId = $request->input('day_id');
+
+    $day = Day::findOrFail($dayId);
+
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'color' => 'required|string|max:7',
+    ]);
+
+    Schedule::create([
+        'title' => $request->input('title'),
+        'description' => $request->input('description'),
+        'color' => $request->input('color'),
+        'user_id' => Auth::id(),
+        'day_id' => $day->id,
+    ]);
+
+    return redirect()->route('calendar.index', ['month' => $month, 'year' => $year]);
+}
+    private function generateDaysForMonth(Calendar $calendar)
     {
-        $schedules = Schedule::whereDate('date', $dayId)->get();
-
-        return response()->json(['schedules' => $schedules]);
-    }
-
+        $firstDayOfMonth = Carbon::create($calendar->year, $calendar->month, 1);
+        $daysInMonth = $firstDayOfMonth->daysInMonth;
     
+        foreach (range(1, $daysInMonth) as $day) {
+            // Check if the day already exists for this calendar
+            if (!Day::where('calendar_id', $calendar->id)->where('date', $firstDayOfMonth->copy()->day($day)->toDateString())->exists()) {
+                Day::create([
+                    'calendar_id' => $calendar->id,
+                    'date' => $firstDayOfMonth->copy()->day($day)->toDateString(),
+                ]);
+            }
+        }
+    }
+    
+
+    public function changeMonth(Request $request, $direction)
+    {
+        $year = $request->year ?? Carbon::now()->year;
+        $month = $request->month ?? Carbon::now()->month;
+
+        $newDate = Carbon::create($year, $month, 1)->addMonth($direction);
+
+        return redirect()->route('calendar.index', [
+            'year' => $newDate->year,
+            'month' => $newDate->month,
+        ]);
+    }
 }
