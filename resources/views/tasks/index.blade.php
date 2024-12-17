@@ -101,24 +101,15 @@
         }
     </style>
 
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Tasks') }}
-        </h2>
-    </x-slot>
-
     <main class="main-content">
         <div class="info-card">
             <h1>More exchange messages</h1>
             <p>Like discord and other things</p>
-            {{-- <a href="{{ url('login/discord') }}">
-                <button>Login with Discord</button>
-            </a> --}}
         </div>
 
         <div class="unread-messages">
             <h1>Unread messages</h1>
-            <p>This will be after only i create a friends list.</p>
+            <p>This will be after only I create a friends list.</p>
         </div>
 
         <div class="task-info">
@@ -131,7 +122,8 @@
                             onchange="checkingTasks(this, {{ $task->id }})"
                             @if ($task->completed) checked @endif>
 
-                        <a href="{{ route('tasks.show', $task->id) }}">
+                        <a href="{{ route('tasks.show', $task->id) }}"
+                            class="{{ $task->completed ? 'completed' : '' }}">
                             {{ $task->description }}
                         </a>
                         <form action="{{ route('tasks.destroy', $task->id) }}" method="POST">
@@ -182,7 +174,7 @@
                 body: JSON.stringify({
                     completed
                 })
-            }).catch(err => console.error('Error updating task status:', err));
+            });
         }
     </script>
 </x-app-layout>
