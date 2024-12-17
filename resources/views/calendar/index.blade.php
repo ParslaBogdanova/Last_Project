@@ -1,314 +1,262 @@
 <x-app-layout>
     <style>
-        .calendar-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 2rem;
-            font-family: Arial, sans-serif;
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            /* 7 columns for days of the week */
+            gap: 1rem;
+            margin-top: 2rem;
         }
 
         .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            max-width: 800px;
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-
-        .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 0.5rem;
-            width: 100%;
-            max-width: 800px;
-            margin-bottom: 2rem;
-        }
-
-        .day-box {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 1rem;
+            /* 7 columns */
             text-align: center;
-            height: 100px;
-            cursor: pointer;
-            position: relative;
-            background-color: white;
-        }
-
-        .day-box:hover {
-            background-color: #f0f0f0;
-        }
-
-        .today {
-            background-color: #ffefc2;
             font-weight: bold;
-            border: 2px solid #ffbf47;
+        }
+
+        .calendar-day {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            height: 80px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+            position: relative;
+        }
+
+        .calendar-day:hover {
+            background-color: #f5f5f5;
+        }
+
+        .calendar-day.selected {
+            background-color: #8e44ad;
+            color: white;
+        }
+
+        .schedule-item {
+            background-color: #e0e0e0;
+            padding: 5px;
+            border-radius: 5px;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+        .month-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .month-navigation button {
+            background-color: #8e44ad;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .month-navigation button:hover {
+            background-color: #7e3d8b;
         }
 
         .modal {
             display: none;
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 700px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 1rem;
-            z-index: 1000;
-            flex-direction: column;
-            justify-content: space-between;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding-top: 100px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 500px;
+            width: 80%;
+            margin: 0 auto;
         }
 
         .modal-header {
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-        }
-
-        .modal-close {
-            cursor: pointer;
-            font-size: 1.2rem;
-            float: right;
-        }
-
-        .modal-backdrop {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-
-        .schedule-list {
-            width: 100%;
-            padding-right: 20px;
-            border-right: 2px solid #ddd;
-            height: 400px;
-            overflow-y: auto;
-        }
-
-        .create-schedule-form {
-            width: 100%;
-            padding-left: 20px;
-            height: 400px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            display: none;
-        }
-
-        .create-schedule-form label {
+            font-size: 20px;
             font-weight: bold;
+            margin-bottom: 10px;
         }
 
-        .create-schedule-form input,
-        .create-schedule-form textarea {
-            padding: 8px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            font-size: 1rem;
-        }
-
-        .create-schedule-form button {
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1.1rem;
-        }
-
-        .create-schedule-form button:hover {
-            background-color: #0056b3;
-        }
-
-        .add-schedule-btn-container {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-
-        .add-schedule-btn {
-            font-size: 1.5rem;
-            color: #007bff;
-            cursor: pointer;
-            background-color: transparent;
-            border: none;
+        .schedule-summary {
             margin-top: 10px;
         }
 
-        .schedule-box-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
+        .schedule-item {
+            background-color: #f2f2f2;
+            padding: 5px;
+            margin: 5px 0;
+            border-radius: 4px;
         }
 
-        .schedule-box-container>div {
-            margin-bottom: 10px;
+        .close-btn {
+            background-color: #ff4d4d;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            background-color: #e60000;
+        }
+
+        .add-schedule-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 16px;
+            line-height: 18px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .add-schedule-btn:hover {
+            background-color: #218838;
+        }
+
+        .day-box {
+            position: relative;
         }
     </style>
 
-    <div class="calendar-container">
-        <div class="calendar-header">
-            <button onclick="changeMonth(-1)">&#8592; Previous</button>
-            <h2 id="month-year">{{ \Carbon\Carbon::create($year, $month, 1)->format('F Y') }}</h2>
-            <button onclick="changeMonth(1)">Next &#8594;</button>
-        </div>
+    <div class="container">
+        <div class="month-navigation">
+            <form action="{{ route('calendar.index', ['month' => $prevMonth, 'year' => $prevYear]) }}" method="GET">
+                <button type="submit">Previous</button>
+            </form>
 
-        <div class="calendar-grid" id="calendar-days">
-            @foreach ($days as $day)
-                <div class="day-box @if ($day['date'] == \Carbon\Carbon::today()->toDateString()) today @endif"
-                    onclick="openModal('{{ $day['date'] }}')">
-                    <span>{{ \Carbon\Carbon::parse($day['date'])->day }}</span>
+            <h3>{{ \Carbon\Carbon::create($year, $month, 1)->format('F Y') }}</h3>
 
-                    <div id="schedules-for-{{ $day['date'] }}" class="schedule-summary">
-                        @foreach ($day['schedules'] as $schedule)
-                            <div class="schedule-item" style="background-color: {{ $schedule->color }};">
-                                {{ $schedule->title }}
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    </div>
-
-    <div class="modal-backdrop" id="modal-backdrop"></div>
-    <div class="modal" id="day-modal">
-        <div class="modal-header">
-            <span id="modal-date"></span>
-            <span class="modal-close" onclick="closeModal()">×</span>
-        </div>
-        <div class="schedule-list" id="schedule-list-container" style="display: none;">
-            <!-- Placeholder while loading -->
-            <p>Loading schedules...</p>
-        </div>
-
-        <div class="create-schedule-form" id="create-schedule-form-container">
-            <form id="create-schedule-form">
-                @csrf
-                <input type="hidden" id="schedule-day-id" name="day_id" value="">
-                <div>
-                    <label for="schedule-title">Title</label>
-                    <input type="text" id="schedule-title" name="title" required>
-                </div>
-                <div>
-                    <label for="schedule-description">Description</label>
-                    <textarea id="schedule-description" name="description"></textarea>
-                </div>
-                <div>
-                    <label for="schedule-color">Color</label>
-                    <input type="color" id="schedule-color" name="color" value="#ffffff">
-                </div>
-                <button type="submit">Create Schedule</button>
+            <form action="{{ route('calendar.index', ['month' => $nextMonth, 'year' => $nextYear]) }}" method="GET">
+                <button type="submit">Next</button>
             </form>
         </div>
 
-        <div class="add-schedule-btn-container" id="add-schedule-btn-container">
-            <button class="add-schedule-btn" id="add-schedule-btn" onclick="openCreateScheduleModal()">+</button>
+        <div class="calendar-header">
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+        </div>
+
+        <div class="calendar" id="calendar-days">
+            @php
+                $firstDayOfMonth = \Carbon\Carbon::create($year, $month, 1)->dayOfWeek;
+                $daysInMonth = \Carbon\Carbon::create($year, $month, 1)->daysInMonth;
+                $totalCells = $firstDayOfMonth + $daysInMonth;
+                $totalRows = ceil($totalCells / 7);
+            @endphp
+
+            @for ($i = 0; $i < $firstDayOfMonth; $i++)
+                <div class="calendar-day"></div>
+            @endfor
+
+            <!-- Display the days of the month -->
+            @foreach ($days as $day)
+                <div class="calendar-day" onclick="openScheduleForm('{{ $day->id }}')">
+                    <span>{{ \Carbon\Carbon::parse($day->date)->day }}</span>
+                    @foreach ($day->schedules as $schedule)
+                        <div class="schedule-item" style="background-color: {{ $schedule->color }};">
+                            {{ $schedule->title }}
+                        </div>
+                    @endforeach
+                </div>
+            @endforeach
+        </div>
+
+        <!-- Day Modal -->
+        <div id="dayModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span id="modalDate">Date: </span>
+                    <button class="close-btn" onclick="closeModal()">X</button>
+                    <button class="add-schedule-btn" onclick="openScheduleForm()">+</button>
+                    <div id="scheduleList" class="schedule-summary">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Schedule Modal -->
+    <div id="addScheduleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Schedule</h3>
+                <button class="close-btn" onclick="closeScheduleForm()">X</button>
+            </div>
+            <form
+                action="{{ route('calendar.createSchedule', ['month' => $month, 'year' => $year, 'date' => $day->date]) }}"
+                method="POST" id = "addScheduleForm">
+                @csrf
+                <input type="hidden" id="scheduleDayId" name="day_id">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required>
+                <br>
+                <label for="title">Description:</label>
+                <input type="text" id="description" name="description" required>
+                <br>
+                <label for="color">Color:</label>
+                <input type="color" id="color" name="color" required>
+                <br>
+                <button type="submit">Add Schedule</button>
+            </form>
         </div>
     </div>
     </div>
 
     <script>
-        const modal = document.getElementById('day-modal');
-        const modalBackdrop = document.getElementById('modal-backdrop');
-        const modalDate = document.getElementById('modal-date');
-        const scheduleListContainer = document.getElementById('schedule-list-container');
-        const createScheduleFormContainer = document.getElementById('create-schedule-form-container');
-
+        // Open the Day Modal
         function openModal(date) {
-            modal.style.display = 'flex';
-            modalBackdrop.style.display = 'block';
+            const modal = document.getElementById('dayModal');
+            const modalDate = document.getElementById('modalDate');
             modalDate.innerText = `Date: ${date}`;
-            document.getElementById('schedule-day-id').value = date;
             fetchSchedules(date);
+            modal.style.display = 'flex';
         }
 
+        // Close the Day Modal
         function closeModal() {
+            const modal = document.getElementById('dayModal');
             modal.style.display = 'none';
-            modalBackdrop.style.display = 'none';
         }
 
-        function fetchSchedules(date) {
-            scheduleListContainer.style.display = 'block';
-            scheduleListContainer.innerHTML = `<p>Loading schedules...</p>`;
+        // Open the Add Schedule Modal
+        function openScheduleForm(dayId) {
+            const addScheduleModal = document.getElementById('addScheduleModal');
+            const scheduleDayIdInput = document.getElementById('scheduleDayId');
 
-            fetch(`/calendar/day/${date}/schedules`)
-                .then(response => response.json())
-                .then(data => {
-                    const schedules = data.schedules;
-                    if (schedules.length > 0) {
-                        let scheduleHtml = '';
-                        schedules.forEach(schedule => {
-                            scheduleHtml += `
-                    <div class="schedule-item" style="background-color: ${schedule.color};">
-                        ${schedule.title} - ${schedule.description}
-                    </div>`;
-                        });
-                        scheduleListContainer.innerHTML = scheduleHtml;
-                    } else {
-                        scheduleListContainer.innerHTML = `<p>No schedules available for this day.</p>`;
-                    }
-                })
-                .catch(() => {
-                    scheduleListContainer.innerHTML = `<p>Failed to load schedules. Please try again later.</p>`;
-                });
+            scheduleDayIdInput.value = dayId; // Assign selected day to hidden input
+            addScheduleModal.style.display = 'flex';
         }
 
-        function openCreateScheduleModal() {
-            createScheduleFormContainer.style.display = 'block';
-            document.getElementById('add-schedule-btn-container').style.display = 'none';
-        }
-
-        document.getElementById('create-schedule-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
-
-            fetch(`/calendar/day/${document.getElementById('schedule-day-id').value}/schedule/store`, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        fetchSchedules(document.getElementById('schedule-day-id')
-                            .value);
-                        closeModal();
-                    }
-                });
-        });
-
-        function changeMonth(monthDelta) {
-            const currentDate = document.getElementById('month-year').innerText.split(' ');
-            const currentMonth = new Date(`${currentDate[0]} 1, ${currentDate[1]}`).getMonth();
-            const currentYear = parseInt(currentDate[1]);
-
-            let newMonth = currentMonth + monthDelta;
-            let newYear = currentYear;
-
-            if (newMonth < 0) {
-                newMonth = 11;
-                newYear--;
-            } else if (newMonth > 11) {
-                newMonth = 0;
-                newYear++;
-            }
-
-            const newMonthYear = new Date(newYear, newMonth).toLocaleString('default', {
-                month: 'long',
-                year: 'numeric'
-            });
-            document.getElementById('month-year').innerText = newMonthYear;
-            loadDays(newYear, newMonth);
+        // Close the Add Schedule Modal
+        function closeScheduleForm() {
+            const modal = document.getElementById('addScheduleModal');
+            modal.style.display = 'none';
         }
     </script>
 </x-app-layout>
