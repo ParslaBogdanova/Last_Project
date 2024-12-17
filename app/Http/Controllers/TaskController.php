@@ -20,12 +20,6 @@ class TaskController extends Controller
     return view('tasks.show', ['task' => $task]);
 }
 
-public function edit($id)
-{
-    $task = Task::where('user_id', Auth::id())->findOrFail($id);
-    return view('tasks.edit', ['task' => $task]);
-}
-
 
     public function store(Request $request)
     {
