@@ -11,26 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tasks', function (Blueprint $table) {
+        Schema::create('calendars', function (Blueprint $table) {
             $table->id();
-            $table->string('description');
+            $table->year('year');
+            $table->unsignedTinyInteger('month');
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
-
-        Schema::table('tasks', function (Blueprint $table) {
-            $table->boolean('completed')->default(false);
-        });
-
-        
-        \DB::table('tasks')->update(['user_id' => 1]);
-        Schema::table('tasks', function (Blueprint $table) {
+        \DB::table('calendars')->update(['user_id' => 1]);
+        Schema::table('calendars', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id')->nullable(false)->change();
         });
-    }
-
+}
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('tasks');
+        Schema::dropIfExists('calendars');
     }
 };
