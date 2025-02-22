@@ -53,4 +53,32 @@ class User extends Authenticatable
     public function calenders(){
         return $this-hasOne(Calenders::class);
     }
+
+    //----------------------------
+
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+    
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
+    
+    public function contacts()
+    {
+        return $this->belongsToMany(User::class, 'contacts', 'user_id', 'contact_id');
+    }
+
+    //----------------------------
+
+    public function zoomMeetings(){
+        return $this->hasMany(ZoomMeeting::class);
+    }
+    public function zoomMeetingInvitations()
+    {
+        return $this->belongsToMany(ZoomMeeting::class, 'user_zoom_meeting', 'user_id', 'zoom_meeting_id');
+    }
+    
 }

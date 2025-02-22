@@ -10,12 +10,11 @@ class Message extends Model
     use HasFactory;
 
     protected $fillable = [
+        'content',
         'sender_id',
         'receiver_id',
-        'content',
     ];
 
-    // Define relationships (sender and receiver are users)
     public function sender()
     {
         return $this->belongsTo(User::class, 'sender_id');
@@ -25,4 +24,9 @@ class Message extends Model
     {
         return $this->belongsTo(User::class, 'receiver_id');
     }
+
+    public function files(){
+        return $this->hasMany(MessageFile::class);
+    }
+
 }

@@ -3,7 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CalendarController;
-use App\Http\Controllers\DayController;
+use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\ZoomMeetingSchedule;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Auth\SocialiteController;
 use Illuminate\Support\Facades\Route;
@@ -22,21 +23,44 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     Route::resource('tasks', TaskController::class);
     Route::patch('/tasks/{task}/update-completed', [TaskController::class, 'updateCompleted'])->name('tasks.update-completed');
+    Route::patch('/tasks/resetWeeklyData', [TaskController::class, 'resetWeeklyData'])->name('tasks.resetWeeklyData');
 });
 
 Route::middleware('auth')->group(function () {
-Route::get('/calendar/{month?}/{year?}', [CalendarController::class, 'index'])->name('calendar.index');
-Route::post('/calendar/{month?}/{year?}', [CalendarController::class, 'createSchedule'])->name('calendar.createSchedule');
+    Route::get('/calendar/{month?}/{year?}', [CalendarController::class, 'index'])->name('calendar.index');
+    Route::get('/calendar/{month}/{year}/{day_id}', [CalendarController::class, 'show'])->name('calendar.show');
+    Route::get('/calendar/{month}/{year}/{day_id}/schedules', [ScheduleController::class, 'index'])
+        ->name('schedules.index');
+    Route::get('/calendar/{month}/{year}/{day_id}/schedules/create', [ScheduleController::class, 'create'])
+        ->name('schedules.create');
+    Route::post('/calendar/{month}/{year}/{day_id}/schedules', [ScheduleController::class, 'store'])
+        ->name('schedules.store');
+    Route::get('/calendar/{month}/{year}/{day_id}/schedules/edit', [ScheduleController::class, 'edit'])
+        ->name('schedules.edit');
+    Route::put('/calendar/{month}/{year}/{day_id}/schedules', [ScheduleController::class, 'update'])
+        ->name('schedules.update');
+    Route::delete('/calendar/{month}/{year}/{day_id}/schedules/{schedule_id}', [ScheduleController::class, 'destroy'])
+    ->name('schedules.destroy');
+    Route::post('/calendar/{month}/{year}/{day_id}/block', [CalendarController::class, 'blockDay'])->name('calendar.blockDay');
+Route::delete('/calendar/{month}/{year}/{day_id}/unblock', [CalendarController::class, 'unblock'])->name('calendar.unblock');
 });
 
 
 
 Route::middleware('auth')->group(function () {
-    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
-    Route::get('/messages/chat/{userId}', [MessageController::class, 'getChatHistory']);
-    Route::post('/messages/send', [MessageController::class, 'sendMessage']);
+    Route::resource('messages', MessageController::class);
+    Route::get('/messages/{user_id}', [MessageController::class, 'show'])->name('messages.show');
+    Route::post('/messages/{user_id}', [MessageController::class, 'store']);
+});
+Route::middleware('auth')->group(function () {
+    Route::resource('messages', MessageController::class);
+    Route::get('/messages/{user_id}', [MessageController::class, 'show'])->name('messages.show');
+    Route::post('/messages/{user_id}', [MessageController::class, 'store']);
 });
 
+Route::middleware('auth')->group(function () {
+    Route::resource('zoomMeeting', ZoomMeetingSchedule::class);
+});
 
 
 // Profile Management (Requires Authentication)

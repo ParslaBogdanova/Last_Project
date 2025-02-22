@@ -4,45 +4,37 @@ namespace App\Http\Controllers;
 
 use App\Models\Calendar;
 use App\Models\Day;
-use App\Models\Schedule;
-use Illuminate\Http\Request;
+use App\Models\BlockedDays;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class CalendarController extends Controller
 {
     public function index($month = null, $year = null)
     {
-        $currentDate = \Carbon\Carbon::now();
-        $month = $month ?? Carbon::now()->month;
-        $year = $year ?? Carbon::now()->year;
-    
-        $calendar = Calendar::where('year', $year)->where('month', $month)
-        ->where('user_id', Auth::id())->first();
-        
-        if (!$calendar) {
-            $calendar = Calendar::create([
+        $currentDate = Carbon::now();
+        $month = $month ?? $currentDate->month;
+        $year = $year ?? $currentDate->year;
+
+        $calendar = Calendar::firstOrCreate(
+            [
                 'year' => $year,
                 'month' => $month,
                 'user_id' => Auth::id(),
-            ]);
-            $this->generateDaysForMonth($calendar);
-        }
-    
+            ]
+        );
+
+        $this->generateDaysForMonth($calendar);
+
         $prevMonth = $month == 1 ? 12 : $month - 1;
         $prevYear = $month == 1 ? $year - 1 : $year;
         $nextMonth = $month == 12 ? 1 : $month + 1;
         $nextYear = $month == 12 ? $year + 1 : $year;
-    
-        $days = $calendar->days;
 
-        $schedules = Schedule::whereIn('day_id', $days->pluck('id'))
-        ->where('user_id', Auth::id())->get();
-    
         return view('calendar.index', [
             'calendar' => $calendar,
-            'days' => $days,
-            'schedules' => $schedules,
+            'days' => $calendar->days,
             'prevMonth' => $prevMonth,
             'prevYear' => $prevYear,
             'nextMonth' => $nextMonth,
@@ -52,50 +44,47 @@ class CalendarController extends Controller
         ]);
     }
 
-    public function createSchedule(Request $request, $month, $year)
-{
-    // Now, we're using the 'day_id' from the form
-    $dayId = $request->input('day_id');
 
-    $day = Day::findOrFail($dayId);
 
-    $request->validate([
-        'title' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'color' => 'required|string|max:7',
-    ]);
+    public function show($month, $year, $day_id)
+    {
+        $day = Day::with(['schedules', 'blockedDays'])->findOrFail($day_id);
 
-    Schedule::create([
-        'title' => $request->input('title'),
-        'description' => $request->input('description'),
-        'color' => $request->input('color'),
-        'user_id' => Auth::id(),
-        'day_id' => $day->id,
-    ]);
+        if ($day->calendar->user_id !== Auth::id() || $day->calendar->month != $month || $day->calendar->year != $year) {
+            abort(403, 'Unauthorized action.');
+        }
 
-    return redirect()->route('calendar.index', ['month' => $month, 'year' => $year]);
-}
+        return view('calendar.show', [
+            'day' => $day,
+            'schedules' => $day->schedules,
+            'blockedDays' => $day->blockedDays,
+            'month' => $month,
+            'year' => $year,
+        ]);
+    }
+
+
+
     private function generateDaysForMonth(Calendar $calendar)
     {
         $firstDayOfMonth = Carbon::create($calendar->year, $calendar->month, 1);
         $daysInMonth = $firstDayOfMonth->daysInMonth;
-    
+
         foreach (range(1, $daysInMonth) as $day) {
-            // Check if the day already exists for this calendar
-            if (!Day::where('calendar_id', $calendar->id)->where('date', $firstDayOfMonth->copy()->day($day)->toDateString())->exists()) {
-                Day::create([
-                    'calendar_id' => $calendar->id,
-                    'date' => $firstDayOfMonth->copy()->day($day)->toDateString(),
-                ]);
-            }
+            Day::firstOrCreate([
+                'calendar_id' => $calendar->id,
+                'date' => $firstDayOfMonth->copy()->day($day)->toDateString(),
+            ]);
         }
     }
-    
 
-    public function changeMonth(Request $request, $direction)
+
+
+    public function changeMonth($direction)
     {
-        $year = $request->year ?? Carbon::now()->year;
-        $month = $request->month ?? Carbon::now()->month;
+        $currentDate = Carbon::now();
+        $month = $currentDate->month;
+        $year = $currentDate->year;
 
         $newDate = Carbon::create($year, $month, 1)->addMonth($direction);
 
@@ -103,5 +92,42 @@ class CalendarController extends Controller
             'year' => $newDate->year,
             'month' => $newDate->month,
         ]);
+    }
+
+
+
+    public function blockDay(Request $request, $month, $year, $day_id) {
+
+    $userId = Auth::id();
+        if (!$userId) {
+            return redirect()->back()->with('error', 'User is not authenticated.');
+        }
+
+    $day = Day::findOrFail($day_id);
+
+    $blockedDay = BlockedDays::updateOrCreate(
+        ['day_id' => $day_id, 'user_id' => $userId], 
+        [
+            'reason' => $request->input('reason'),
+            'status' => true,
+            'calendar_id' => $day->calendar_id,
+        ]
+    );
+
+    return redirect()->back()->with('success', 'Day blocked successfully.');
+}
+
+    
+
+    public function unblock(Request $request, $month, $year, $day_id) {
+        $blockedDay = BlockedDays::where('day_id', $day_id)->first();
+    
+        if ($blockedDay) {
+            $blockedDay->delete();
+    
+            return redirect()->back()->with('success', 'Day unblocked successfully.');
+        }
+    
+        return redirect()->back()->with('error', 'This day is not blocked.');
     }
 }
