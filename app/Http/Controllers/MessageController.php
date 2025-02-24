@@ -25,9 +25,12 @@ class MessageController extends Controller
             })->orderBy('created_at', 'asc')->get();
         }
 
-        return view('messages.index', compact('users', 'receiver_id', 'messages'));
+        return view('messages.index', [
+            'users'=>$user,
+            'receiver_id'=>$receiver_id,
+            'messages' => $messages,
+        ]);
     }
-
 
     public function store(Request $request)
     {
@@ -98,7 +101,11 @@ public function show($user_id)
         }
     });
 
-    return view('messages.show', compact('users', 'receiver_id', 'messages'));
+    return view('messages.show', [
+        'users'=>$user,
+        'receiver_id'=>$receiver_id,
+        'messages' => $messages
+    ]);
 }
 
 

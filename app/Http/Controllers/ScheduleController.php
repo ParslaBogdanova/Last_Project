@@ -36,12 +36,16 @@ class ScheduleController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'color' => 'required|string|max:7',
+            'start_time' => 'required|date_format:Y-m-d H:i:s',
+            'end_time' => 'nullable|date_format:Y-m-d H:i:s',
         ]);
 
         Schedule::create([
             'title' => $request->input('title'),
             'description' => $request->input('description'),
             'color' => $request->input('color'),
+            'start_time' => $request->input('start_time'),
+            'end_time' => $request->input('end_time'),
             'user_id' => Auth::id(),
             'day_id' => $day->id,
         ]);
@@ -76,6 +80,8 @@ class ScheduleController extends Controller
         'title' => 'required|string|max:255',
         'description' => 'nullable|string',
         'color' => 'required|string',
+        'start_time' => 'required|date_format:Y-m-d H:i:s',
+        'end_time' => 'nullable|date_format:Y-m-d H:i:s',
     ]);
 
     $schedule = Schedule::findOrFail($validatedData['schedule_id']);
@@ -83,6 +89,8 @@ class ScheduleController extends Controller
         'title' => $validatedData['title'],
         'description' => $validatedData['description'],
         'color' => $validatedData['color'],
+        'start_time' => $validatedData['start_time'],
+        'end_time' => $validatedData['end_time'],
     ]);
 
     return redirect()->route('calendar.show', ['month' => $month, 'year' => $year, 'day_id' => $day_id]);
