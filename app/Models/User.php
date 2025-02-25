@@ -73,8 +73,8 @@ class User extends Authenticatable
 
     //----------------------------
 
-    public function zoomMeetings(){
-        return $this->hasMany(ZoomMeeting::class);
+    public function createdZoomMeetings(){
+        return $this->hasMany(ZoomMeeting::class, 'user_id');
     }
     public function zoomMeetingInvitations()
     {
