@@ -19,8 +19,6 @@ return new class extends Migration
             $table->unsignedBigInteger('day_id');
             $table->foreign('day_id')->references('id')->on('days')->onDelete('cascade'); 
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
-            $table->time('start_time');
-            $table->time('end_time')->nullable();
             $table->timestamps();
         });
 
