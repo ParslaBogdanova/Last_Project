@@ -43,6 +43,8 @@ Route::middleware('auth')->group(function () {
     ->name('schedules.destroy');
     Route::post('/calendar/{month}/{year}/{day_id}/block', [CalendarController::class, 'blockDay'])->name('calendar.blockDay');
 Route::delete('/calendar/{month}/{year}/{day_id}/unblock', [CalendarController::class, 'unblock'])->name('calendar.unblock');
+
+
 });
 
 
