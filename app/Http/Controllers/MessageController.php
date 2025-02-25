@@ -26,7 +26,7 @@ class MessageController extends Controller
         }
 
         return view('messages.index', [
-            'users'=>$user,
+            'users'=>$users,
             'receiver_id'=>$receiver_id,
             'messages' => $messages,
         ]);
@@ -102,7 +102,7 @@ public function show($user_id)
     });
 
     return view('messages.show', [
-        'users'=>$user,
+        'users'=>$users,
         'receiver_id'=>$receiver_id,
         'messages' => $messages
     ]);
