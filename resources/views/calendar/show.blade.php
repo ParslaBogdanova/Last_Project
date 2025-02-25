@@ -54,6 +54,7 @@
                             <button class="dropdown-toggle" id="blockDropdownBtn">+</button>
                             <div class="dropdown-options" id="dropdownOptions" style="display: none;">
                                 <a href="javascript:void(0)" id="blockDayBtn">Block Day</a>
+                                <a href="javascript:void(1)" id="createZoomMeeting">Create Zoom Meeting</a>
                             </div>
                         </div>
 
@@ -65,6 +66,39 @@
                                 <textarea name="reason" id="reason" rows="4" placeholder="Enter reason for blocking"></textarea>
                                 <button type="submit" class="submit-btn">Submit</button>
                             </form>
+                        </div>
+                        <div id = "zoomForm" style="display:none;">
+                            <form
+                                action="{{ route('zoomMeeting.store', ['month' => $month, 'year' => $year, 'day_id' => $day->id]) }}"
+                                method="POST">
+                                @csrf
+                                <div>
+                                    <label for="title">Title</label>
+                                    <input type="text" id="title" name="title" required>
+                                </div>
+                                <div>
+                                    <label for="topic">Topic</label>
+                                    <textarea id="topic" name="topic"></textarea>
+                                </div>
+                                <div>
+                                    <label for="start_time">Start Time</label>
+                                    <input type="datetime-local" id="start_time" name="start_time" required>
+                                </div>
+                                <div>
+                                    <label for="end_time">End Time</label>
+                                    <input type="datetime-local" id="end_time" name="end_time">
+                                </div>
+                                <div>
+                                    <label for="invited_users">Invited Users</label>
+                                    <select name="invited_users[]" id="invited_users" multiple required>
+                                        @foreach ($users as $user)
+                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <button type="submit">Create Zoom Meeting</button>
+                            </form>
+
                         </div>
                     @endif
                 </div>
