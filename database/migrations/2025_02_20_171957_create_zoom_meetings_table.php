@@ -17,7 +17,6 @@ return new class extends Migration
             $table->text('topic')->nullable();
             $table->unsignedBigInteger('day_id');
             $table->foreign('day_id')->references('id')->on('days')->onDelete('cascade');
-            $table->json('invited_users')->nullable();
             $table->dateTime('start_time');
             $table->dateTime('end_time')->nullable();
             $table->timestamps();
