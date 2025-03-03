@@ -16,8 +16,6 @@ return new class extends Migration
             $table->foreignId('calendar_id')->constrained();
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->date('date');
-            $table->time('start_time')->nullable();
-            $table->time('end_time')->nullable();
             $table->timestamps();
         });
     }

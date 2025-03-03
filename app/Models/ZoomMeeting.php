@@ -12,6 +12,7 @@ class ZoomMeeting extends Model
     protected $fillable =[
         'title',
         'topic',
+        'invited_users',
         'start_time',
         'end_time',
         'user_id',
@@ -26,7 +27,7 @@ class ZoomMeeting extends Model
         return $this->belongsTo(Day::class);
     }
 
-    public function creator(){
-        return $this->belongsTo(User::class, 'user_id');
+    public function user(){
+        return $this->belongsTo(User::class);
     }
 }
