@@ -45,6 +45,14 @@ Route::middleware('auth')->group(function () {
 Route::delete('/calendar/{month}/{year}/{day_id}/unblock', [CalendarController::class, 'unblock'])->name('calendar.unblock');
 
 
+
+Route::get('/calendar/{month}/{year}/{day_id}/zoomMeetings', [ZoomMeetingSchedule::class, 'index'])
+->name('zoomMeetings.index');
+Route::get('/calendar/{month}/{year}/{day_id}/zoomMeetings/create', [ZoomMeetingSchedule::class, 'create'])
+->name('zoomMeetings.create');
+Route::post('/calendar/{month}/{year}/{day_id}/zoomMeetings', [ZoomMeetingSchedule::class, 'store'])
+->name('zoomMeetings.store');
+
 });
 
 
@@ -53,15 +61,6 @@ Route::middleware('auth')->group(function () {
     Route::resource('messages', MessageController::class);
     Route::get('/messages/{user_id}', [MessageController::class, 'show'])->name('messages.show');
     Route::post('/messages/{user_id}', [MessageController::class, 'store']);
-});
-Route::middleware('auth')->group(function () {
-    Route::resource('messages', MessageController::class);
-    Route::get('/messages/{user_id}', [MessageController::class, 'show'])->name('messages.show');
-    Route::post('/messages/{user_id}', [MessageController::class, 'store']);
-});
-
-Route::middleware('auth')->group(function () {
-    Route::resource('zoomMeeting', ZoomMeetingSchedule::class);
 });
 
 

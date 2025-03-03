@@ -67,45 +67,49 @@
                                 <button type="submit" class="submit-btn">Submit</button>
                             </form>
                         </div>
-                        <div id = "zoomForm" style="display:none;">
+
+
+                        <div id="zoomForm" style="display:none;">
                             <form
-                                action="{{ route('zoomMeeting.store', ['month' => $month, 'year' => $year, 'day_id' => $day->id]) }}"
-                                method="POST">
+                                action="{{ route('zoomMeetings.store', ['month' => $month, 'year' => $year, 'day_id' => $day->id]) }}"
+                                method="POST" id="zoom-form">
                                 @csrf
                                 <div>
-                                    <label for="title">Title</label>
-                                    <input type="text" id="title" name="title" required>
+                                    <label for="title_zoom">Title</label>
+                                    <input type="text_zoom" id="title_zoom" name="title_zoom" required>
                                 </div>
                                 <div>
-                                    <label for="topic">Topic</label>
-                                    <textarea id="topic" name="topic"></textarea>
+                                    <label for="topic_zoom">Topic</label>
+                                    <textarea id="topic_zoom" name="topic_zoom"></textarea>
                                 </div>
                                 <div>
                                     <label for="start_time">Start Time</label>
-                                    <input type="datetime-local" id="start_time" name="start_time" required>
+                                    <input type="time" id="start_time" name="start_time" required>
                                 </div>
                                 <div>
                                     <label for="end_time">End Time</label>
-                                    <input type="datetime-local" id="end_time" name="end_time">
+                                    <input type="time" id="end_time" name="end_time">
                                 </div>
                                 <div>
                                     <label for="invited_users">Invited Users</label>
                                     <select name="invited_users[]" id="invited_users" multiple required>
                                         @foreach ($users as $user)
-                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                            <option value="{{ $user->id }}"
+                                                {{ in_array($user->id, old('invited_users', [])) ? 'selected' : '' }}>
+                                                {{ $user->name }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <button type="submit">Create Zoom Meeting</button>
                             </form>
-
                         </div>
                     @endif
                 </div>
             </div>
-
         </div>
 
+        <!-- Existing schedules container -->
         <div class="schedule-list-container">
             <h2>Existing Schedules</h2>
             @foreach ($day->schedules as $schedule)
@@ -123,6 +127,7 @@
             @endif
         </div>
 
+        <!-- Edit schedule form -->
         <div class="schedule-details-container" id="scheduleDetailsContainer">
             <button class="close-btn" onclick="closeScheduleDetails()">X</button>
             <h2>Edit Schedule</h2>

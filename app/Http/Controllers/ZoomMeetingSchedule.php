@@ -10,23 +10,18 @@ use Illuminate\Support\Facades\Auth;
 
 class ZoomMeetingSchedule extends Controller
 {
-    
-    public function index()
-    {
-        return view('zoomMeeting.index');
-    }
 
    
-    public function create($month, $years, $day_id)
+    public function create($month, $year, $day_id)
     {
         $day = Day::findOrFail($day_id);
 
-        if ($day->calendar_user_id !== Auth::id() || $day->calendar->month != $month || $day->calendar_year != $year){
+        if ($day->calendar->user_id !== Auth::id() || $day->calendar->month != $month || $day->calendar->year != $year){
             abort(403, 'Unauthorized action.');
         }
         $users = User::where('id', '!=', Auth::id())->get();
 
-        return view('zoomMeeting.create', [
+        return view('zoomMeetings.create', [
             'day' => $day,
             'month' => $month,
             'year' => $year,
@@ -37,31 +32,32 @@ class ZoomMeetingSchedule extends Controller
     
     public function store(Request $request, $month, $year, $day_id)
     {
+
+      
         $day = Day::findOrFail($day_id);
-
+    
         if ($day->calendar->user_id !== Auth::id() || $day->calendar->month != $month || $day->calendar->year != $year) {
-            abort(403, 'Unauthorized action.');
+            return response()->json(['error' => 'Unauthorized action.'], 403);
         }
-
+    
         $request->validate([
-            'title' => 'required|string|max:255',
-            'topic' => 'nullable|string',
+            'title_zoom' => 'required|string',
+            'topic_zoom' => 'nullable|string',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'nullable|date_format:H:i',
             'invited_users' => 'required|array',
             'invited_users.*' => 'exists:users,id',
-            'start_time' => 'required|date_format:Y-m-d H:i:s',
-            'end_time' => 'nullable|date_format:Y-m-d H:i:s',
         ]);
-
+    
         $zoomMeeting = ZoomMeeting::create([
-            'title' => $request->input('title'),
-            'topic' => $request->input('topic'),
-            'invited_users' => json_encode($request->input('invited_users')),
+            'title_zoom' => $request->input('title_zoom'),
+            'topic_zoom' => $request->input('topic_zoom'),
             'start_time' => $request->input('start_time'),
             'end_time' => $request->input('end_time'),
             'user_id' => Auth::id(),
             'day_id' => $day->id,
         ]);
-        
+    
         $zoomMeeting->users()->attach($request->input('invited_users'));
 
         return redirect()->route('calendar.show', [
@@ -69,18 +65,9 @@ class ZoomMeetingSchedule extends Controller
             'year' => $year,
             'day_id' => $day_id,
         ]);
+        dd($request->all());
     }
 
-    public function show($month, $year, $day_id)
-    {
-        $day = Day::findOrFail($day_id);
-    
-        // Show the day details, no need to load users here anymore
-        return view('calendar.show', compact('day', 'month', 'year'));
-    }
-    
-
-  
     public function edit($month, $year, $day_id, $id)
     {
         $zoomMeeting = ZoomMeeting::findOrFail($id);
@@ -102,18 +89,18 @@ class ZoomMeetingSchedule extends Controller
     {
         $validatedData = $request->validate([
             'zoom_meeting_id' => 'required|exists:zoom_meeting,id',
-            'title' => 'required|string|max:255',
-            'topic' => 'nullable|string',
+            'title_zoom' => 'required|string|max:255',
+            'topic_zoom' => 'nullable|string',
             'invited_users' => 'required|array',
             'invited_users.*' => 'exists:users,id',
-            'start_time' => 'required|date_format:Y-m-d H:i:s',
-            'end_time' => 'nullable|date_format:Y-m-d H:i:s',
+            'start_time' => 'required|date_format:H:i:s',
+            'end_time' => 'nullable|date_format:H:i:s',
         ]);
     
         $zoomMeeting = ZoomMeeting::findOrFail($validatedData['zoom_meeting_id']);
         $zoomMeeting->update([
-            'title' => $validatedData['title'],
-            'topic' => $validatedData['topic'],
+            'title_zoom' => $validatedData['title'],
+            'topic_zoom' => $validatedData['topic'],
             'invited_users' => $validatedData['invited_users'],
             'start_time' => $validatedData['start_time'],
             'end_time' => $validatedData['end_time'],

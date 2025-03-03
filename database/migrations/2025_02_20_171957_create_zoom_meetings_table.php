@@ -13,16 +13,19 @@ return new class extends Migration
     {
         Schema::create('zoom_meetings', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('topic')->nullable();
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('day_id');
             $table->foreign('day_id')->references('id')->on('days')->onDelete('cascade');
+
+            $table->string('title_zoom');
+            $table->text('topic_zoom')->nullable();
             $table->dateTime('start_time');
             $table->dateTime('end_time')->nullable();
             $table->timestamps();
-    
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+        });
+        \DB::table('zoom_meetings')->update(['user_id' => 1]);
+        Schema::table('zoom_meetings', function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id')->nullable(false)->change();
         });
     }
 
