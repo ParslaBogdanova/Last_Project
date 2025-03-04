@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Calendar;
 use App\Models\Day;
-use App\Models\ZoomMeeting;
 use App\Models\User;
 use App\Models\BlockedDays;
 use Illuminate\Support\Facades\Auth;
@@ -50,7 +49,7 @@ class CalendarController extends Controller
 
     public function show($month, $year, $day_id)
     {
-        $day = Day::with(['schedules', 'blockedDays', 'zoomMeetings'])->findOrFail($day_id);
+        $day = Day::with(['schedules', 'blockedDays'])->findOrFail($day_id);
 
         if ($day->calendar->user_id !== Auth::id() || $day->calendar->month != $month || $day->calendar->year != $year) {
             abort(403, 'Unauthorized action.');
@@ -61,7 +60,6 @@ class CalendarController extends Controller
             'day' => $day,
             'schedules' => $day->schedules,
             'blockedDays' => $day->blockedDays,
-            'zoomMeetings' => $day->zoomMeetings,
             'month' => $month,
             'year' => $year,
             'users' => $users,
