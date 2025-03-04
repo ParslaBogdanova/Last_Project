@@ -4,7 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ScheduleController;
-use App\Http\Controllers\ZoomMeetingSchedule;
+use App\Http\Controllers\ZoomMeetingController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Auth\SocialiteController;
 use Illuminate\Support\Facades\Route;
@@ -45,16 +45,13 @@ Route::middleware('auth')->group(function () {
 Route::delete('/calendar/{month}/{year}/{day_id}/unblock', [CalendarController::class, 'unblock'])->name('calendar.unblock');
 
 
-
-Route::get('/calendar/{month}/{year}/{day_id}/zoomMeetings', [ZoomMeetingSchedule::class, 'index'])
-->name('zoomMeetings.index');
-Route::get('/calendar/{month}/{year}/{day_id}/zoomMeetings/create', [ZoomMeetingSchedule::class, 'create'])
-->name('zoomMeetings.create');
-Route::post('/calendar/{month}/{year}/{day_id}/zoomMeetings', [ZoomMeetingSchedule::class, 'store'])
-->name('zoomMeetings.store');
-
+Route::get('/calendar/{month}/{year}/{day_id}/zoom_meetings', [ZoomMeetingController::class, 'index'])
+->name('zoom_meetings.index');
+Route::get('/calendar/{month}/{year}/{day_id}/zoom_meetings/create', [ZoomMeetingController::class, 'create'])
+->name('zoom_meetings.create');
+Route::post('/calendar/{month}/{year}/{day_id}/zoom_meetings', [ZoomMeetingController::class, 'store'])
+->name('zoom_meetings.store');
 });
-
 
 
 Route::middleware('auth')->group(function () {
