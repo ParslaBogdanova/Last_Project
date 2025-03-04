@@ -66,15 +66,8 @@ document.getElementById('createZoomMeeting').addEventListener('click', function 
     document.getElementById('dropdownOptions').style.display = 'none'; 
 });
 
-document.getElementById('zoom-form').addEventListener('submit', function(event) {
-    event.preventDefault(); 
-
-    const title_zoom = document.getElementById('title_zoom').value;
-    const topic_zoom = document.getElementById('topic_zoom').value;
-    const invited_users = Array.from(document.getElementById('invited_users').selectedOptions).map(option => option.value);
-    const start_time = document.getElementById('start_time').value;
-    const end_time = document.getElementById('end_time').value;
-
-    console.log({ title_zoom, topic_zoom, invited_users, start_time, end_time });
-
-});
+    
+function toggleBlockForm() {
+    const zoomForm = document.getElementById('zoomForm');
+    zoomForm.style.display = zoomForm.style.display === 'none' ? 'block' : 'none';
+}
