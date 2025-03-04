@@ -78,7 +78,7 @@ class User extends Authenticatable
     }
     public function zoomMeetingInvitations()
     {
-        return $this->belongsToMany(ZoomMeeting::class, 'user_zoom_meeting', 'user_id', 'zoom_meeting_id');
+        return $this->belongsToMany(ZoomMeeting::class, 'user_zoom_meetings', 'user_id', 'zoom_meeting_id');
     }
     
 }
