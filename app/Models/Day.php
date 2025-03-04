@@ -21,6 +21,7 @@ class Day extends Model
     public function schedules(){
         return $this->hasMany(Schedule::class, 'day_id');
     }
+
     public function zoomMeetings(){
         return $this->hasMany(ZoomMeeting::class, 'day_id');
     }
