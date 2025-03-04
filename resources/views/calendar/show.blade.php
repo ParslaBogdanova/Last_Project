@@ -54,7 +54,7 @@
                             <button class="dropdown-toggle" id="blockDropdownBtn">+</button>
                             <div class="dropdown-options" id="dropdownOptions" style="display: none;">
                                 <a href="javascript:void(0)" id="blockDayBtn">Block Day</a>
-                                <a href="javascript:void(1)" id="createZoomMeeting">Create Zoom Meeting</a>
+                                <a href="javascript:void(0)" id="createZoomMeeting">Create Zoom Meeting</a>
                             </div>
                         </div>
 
@@ -67,16 +67,14 @@
                                 <button type="submit" class="submit-btn">Submit</button>
                             </form>
                         </div>
-
-
                         <div id="zoomForm" style="display:none;">
                             <form
-                                action="{{ route('zoomMeetings.store', ['month' => $month, 'year' => $year, 'day_id' => $day->id]) }}"
+                                action="{{ route('zoom_meetings.store', ['month' => $month, 'year' => $year, 'day_id' => $day->id]) }}"
                                 method="POST" id="zoom-form">
                                 @csrf
                                 <div>
                                     <label for="title_zoom">Title</label>
-                                    <input type="text_zoom" id="title_zoom" name="title_zoom" required>
+                                    <input type="text" id="title_zoom" name="title_zoom" required>
                                 </div>
                                 <div>
                                     <label for="topic_zoom">Topic</label>
