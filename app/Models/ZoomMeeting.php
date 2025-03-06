@@ -9,6 +9,8 @@ class ZoomMeeting extends Model
 {
     use HasFactory;
 
+    protected $table = 'zoom_meetings';
+
     protected $fillable = [
         'title_zoom',
         'topic_zoom',
