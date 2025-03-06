@@ -54,6 +54,7 @@ class ZoomMeetingController extends Controller
             'user_id' => Auth::id(),
             'day_id' => $day->id,
         ]);
+
         $zoomMeeting->users()->attach($request->input('invited_users'));
 
         return redirect()->route('calendar.show', [
@@ -64,24 +65,62 @@ class ZoomMeetingController extends Controller
         
     }
 
-    public function edit(ZoomMeeting $zoomMeeting)
+    public function edit($month, $year, $day_id, $id)
     {
-        //
+        $zoomMeeting = ZoomMeeting::findOrFail($id);
+
+        if($zoomMeeting->user_id !== Auth::id() || $zoomMeeting->day_id != $day_id){
+            abort(403, 'Unauthorized action.');
+        }
+
+        return view('zoom_meetings.edit', [
+            'zoomMeeting' => $zoomMeeting,
+            'month' => $month,
+            'year' => $year,
+            'day_id' => $day_id,
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, ZoomMeeting $zoomMeeting)
+    public function update(Request $request, $month, $year, $day_id)
     {
-        //
+        $validateData = $request->validate([
+            'zoom_meetings_id' => 'required|exists:zoom_meetings,id',
+            'title_zoom' => 'required|string',
+            'topic_zoom' => 'nullable|string',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'nullable|date_format:H:i|after:start_time',
+            'invited_users' => 'nullable|array',
+            'invited_users.*' => 'exists:users,id',
+        ]);
+
+        $zoomMeeting = ZoomMeeting::findOrFail($validateData['zoom_meetings_id']);
+
+        $zoomMeeting->update([
+            'title_zoom' => $validateData['title_zoom'],
+            'topic_zoom' =>  $validateData['topic_zoom'],
+            'start_time' =>  $validateData['start_time'],
+            'end_time' =>  $validateData['end_time'],
+        ]);
+        $zoomMeeting->users()->sync($request->input('invited_users', []));
+
+        return redirect()->route('calendar.show', [
+            'month' => $month,
+            'year' => $year,
+            'day_id' => $day_id
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ZoomMeeting $zoomMeeting)
+    public function destroy($month, $year, $day_id, $zoomMeeting_id)
     {
-        //
+        $zoomMeeting = ZoomMeeting::find($zoomMeeting_id);
+
+        if($zoomMeeting){
+            $zoomMeeting->delete();
+            return response()->json(['message' => 'Zoom Meeting deleted successfully.'], 200);
+        }
+        return response()->json(['message' => 'Zoom Meeting not found.'], 404);
     }
 }
