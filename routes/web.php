@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/calendar/{month?}/{year?}', [CalendarController::class, 'index'])->name('calendar.index');
     Route::get('/calendar/{month}/{year}/{day_id}', [CalendarController::class, 'show'])->name('calendar.show');
+
     Route::get('/calendar/{month}/{year}/{day_id}/schedules', [ScheduleController::class, 'index'])
         ->name('schedules.index');
     Route::get('/calendar/{month}/{year}/{day_id}/schedules/create', [ScheduleController::class, 'create'])
@@ -51,6 +52,12 @@ Route::get('/calendar/{month}/{year}/{day_id}/zoom_meetings/create', [ZoomMeetin
 ->name('zoom_meetings.create');
 Route::post('/calendar/{month}/{year}/{day_id}/zoom_meetings', [ZoomMeetingController::class, 'store'])
 ->name('zoom_meetings.store');
+Route::get('/calendar/{month}/{year}/{day_id}/zoom_meetings/{zoom_meetings_id}/edit', [ZoomMeetingController::class, 'edit'])
+->name('zoom_meetings.edit');
+Route::put('/calendar/{month}/{year}/{day_id}/zoom_meetings', [ZoomMeetingController::class, 'update'])
+->name('zoom_meetings.update');
+Route::delete('/calendar/{month}/{year}/{day_id}/zoom_meetings/{zoom_meetings_id}', [ZoomMeetingController::class, 'destroy'])
+->name('zoom_meetings.destroy');
 });
 
 

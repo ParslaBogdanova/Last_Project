@@ -53,6 +53,13 @@
                                 </div>
                             @endforeach
                         </div>
+                        <div class="zoomMeetings">
+                            @foreach ($day->zoomMeetings as $zoomMeeting)
+                                <div class="zoomMeeting-item" style="background-color:darkslategray;">
+                                    {{ $zoomMeeting->title_zoom }}
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
                 </a>
             @endforeach

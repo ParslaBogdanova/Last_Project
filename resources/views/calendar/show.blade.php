@@ -120,12 +120,35 @@
                 </div>
             @endforeach
 
+            @foreach ($day->zoomMeetings as $zoomMeeting)
+                <div class="zoomMeeting-item" data-id="{{ $zoomMeeting->id }}" style="background-color:darkslategrey"
+                    onclick="openZoomMeeting({{ $zoomMeeting->id }})">
+                    <div class="delete-zoomMeeting" onclick="deleteZoomMeeting(event, {{ $zoomMeeting->id }})">X</div>
+                    <div class="zoomMeeting-title_zoom">{{ $zoomMeeting->title_zoom }}</div>
+                    <div class="zoomMeeting-topic_zoom">{{ $zoomMeeting->topic_zoom }}</div>
+                    <div class="zoomMeeting-start_time">{{ $zoomMeeting->start_time }}</div>
+                    <div class="zoomMeeting-end_time">{{ $zoomMeeting->end_time }}</div>
+                    <div class="zoomMeeting-invited_users">
+                        @if ($zoomMeeting->users->isNotEmpty())
+                            @foreach ($zoomMeeting->users as $invitedUser)
+                                <span>{{ $invitedUser->name }}</span>
+                                @if (!$loop->last)
+                                    ,
+                                @endif
+                            @endforeach
+                        @else
+                            <span>No users invited</span>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+
             @if ($day->schedules->count() === 0)
                 <p>No schedules for this day.</p>
             @endif
         </div>
 
-        <!-- Edit schedule form -->
+        <!-- Edit form -->
         <div class="schedule-details-container" id="scheduleDetailsContainer">
             <button class="close-btn" onclick="closeScheduleDetails()">X</button>
             <h2>Edit Schedule</h2>
@@ -148,6 +171,45 @@
                 <button type="submit">Save Changes</button>
             </form>
         </div>
+
+        <div class="zoomMeeting-details-container" id="zoomMeetingDetailsContainer">
+            <button class="close-btn" onclick="closeZoomMeetingDetails()">X</button>
+            <h2>Edit ZoomMeeting</h2>
+            <form method="POST" id="editZoomMeeting">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="zoom_meetings_id" id="zoomMeetingIdInput">
+                <div>
+                    <label for="edit_title_zoom">Title</label>
+                    <input type="text" id="edit_title_zoom" name="title_zoom" required>
+                </div>
+                <div>
+                    <label for="edit_topic_zoom">Topic</label>
+                    <textarea id="edit_topic_zoom" name="topic_zoom"></textarea>
+                </div>
+                <div>
+                    <label for="edit_start_time">Start Time</label>
+                    <input type="time" id="edit_start_time" name="start_time" required>
+                </div>
+                <div>
+                    <label for="edit_end_time">End Time</label>
+                    <input type="time" id="edit_end_time" name="end_time">
+                </div>
+                <div>
+                    <label for="edit_invited_users">Invited Users</label>
+                    <select name="invited_users[]" id="edit_invited_users" multiple required>
+                        @foreach ($users as $user)
+                            <option value="{{ $user->id }}"
+                                {{ in_array($user->id, old('invited_users', [])) ? 'selected' : '' }}>
+                                {{ $user->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <div id="invitedUsersList"></div>
+                </div>
+                <button type="submit">Update Meeting</button>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -166,6 +228,91 @@
             document.getElementById('editScheduleForm').action =
                 "{{ route('schedules.update', ['month' => $month, 'year' => $year, 'day_id' => $day->id, 'id' => '']) }}/" +
                 selectedSchedule.id;
+        }
+
+        let invitedUsers = []; // Store invited users globally
+
+        function openZoomMeeting(zoomMeetingId) {
+            const zoomMeetings = @json($day->zoomMeetings);
+            const selectedZoomMeeting = zoomMeetings.find(s => s.id === zoomMeetingId);
+
+            if (!selectedZoomMeeting) {
+                console.error("Zoom meeting not found:", zoomMeetingId);
+                return;
+            }
+
+            console.log("Selected Zoom Meeting Data:", selectedZoomMeeting);
+
+            document.getElementById('zoomMeetingIdInput').value = selectedZoomMeeting.id;
+            document.getElementById('edit_title_zoom').value = selectedZoomMeeting.title_zoom;
+            document.getElementById('edit_topic_zoom').value = selectedZoomMeeting.topic_zoom;
+            document.getElementById('edit_start_time').value = selectedZoomMeeting.start_time;
+            document.getElementById('edit_end_time').value = selectedZoomMeeting.end_time;
+
+            // Load invited users only on first open
+            if (invitedUsers.length === 0) {
+                invitedUsers = selectedZoomMeeting.invited_users || selectedZoomMeeting.users.map(user => user.id) || [];
+            }
+
+            updateInvitedUsersUI();
+
+            // Fix: Dynamically update the form action URL
+            document.getElementById('editZoomMeeting').action =
+                "{{ route('zoom_meetings.update', ['month' => $month, 'year' => $year, 'day_id' => $day->id, 'id' => '']) }}/" +
+                selectedZoomMeeting.id;
+
+            // Make the form visible
+            document.getElementById('zoomMeetingDetailsContainer').classList.add('visible');
+        }
+
+        // Update the UI without refreshing the entire form
+        function updateInvitedUsersUI() {
+            const allUsers = @json($users);
+            const invitedUsersList = document.getElementById('invitedUsersList');
+            const invitedUsersSelect = document.getElementById('edit_invited_users');
+
+            invitedUsersList.innerHTML = '';
+            invitedUsersSelect.innerHTML = '';
+
+            // Show already invited users with remove ("-") button
+            invitedUsers.forEach(userId => {
+                let user = allUsers.find(u => u.id == userId);
+                if (user) {
+                    let userItem = document.createElement('div');
+                    userItem.innerHTML = `<span>${user.name} </span>
+                <button type="button" class="remove-user" data-user-id="${user.id}">-</button>`;
+                    invitedUsersList.appendChild(userItem);
+                }
+            });
+
+            // Attach event listener to remove buttons
+            document.querySelectorAll('.remove-user').forEach(button => {
+                button.addEventListener('click', function() {
+                    let userId = this.getAttribute('data-user-id');
+                    invitedUsers = invitedUsers.filter(id => id != userId);
+                    updateInvitedUsersUI(); // Update only the invited users list
+                });
+            });
+
+            // Show only uninvited users in dropdown
+            const invitedUsersSet = new Set(invitedUsers);
+            allUsers.forEach(user => {
+                if (!invitedUsersSet.has(user.id)) {
+                    let option = document.createElement('option');
+                    option.value = user.id;
+                    option.textContent = user.name;
+                    invitedUsersSelect.appendChild(option);
+                }
+            });
+
+            // Handle adding a new invited user
+            invitedUsersSelect.addEventListener('change', function() {
+                let newUserId = this.value;
+                if (newUserId && !invitedUsers.includes(newUserId)) {
+                    invitedUsers.push(newUserId);
+                    updateInvitedUsersUI(); // Only update the user list
+                }
+            });
         }
     </script>
 </x-app-layout>
