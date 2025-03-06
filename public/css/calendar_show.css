@@ -1,3 +1,4 @@
+/* ---------------- CONTAINER LAYOUT ---------------- */
 .container {
     display: flex;
     justify-content: space-between;
@@ -5,6 +6,7 @@
     gap: 20px;
 }
 
+/* ---------------- FORM CONTAINER ---------------- */
 .form-container {
     width: 48%;
     background-color: #f9f9f9;
@@ -41,13 +43,18 @@
     width: auto;
 }
 
-.form-container button {
-    background-color: #28a745;
+/* ---------------- BUTTON STYLES ---------------- */
+.form-container button,
+.back-to-calendar-btn {
     color: white;
     border: none;
     padding: 8px 16px;
     border-radius: 5px;
     cursor: pointer;
+}
+
+.form-container button {
+    background-color: #28a745;
 }
 
 .form-container button:hover {
@@ -56,11 +63,6 @@
 
 .back-to-calendar-btn {
     background-color: #2ecc71;
-    color: white;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 5px;
-    cursor: pointer;
     font-size: 14px;
     text-align: center;
     display: inline-block;
@@ -71,6 +73,7 @@
     background-color: #27ae60;
 }
 
+/* ---------------- SCHEDULE LIST CONTAINER ---------------- */
 .schedule-list-container {
     width: 48%;
     background-color: #f9f9f9;
@@ -82,7 +85,9 @@
     gap: 10px;
 }
 
-.schedule-item {
+/* ---------------- SCHEDULE & ZOOM_MEETING ITEM ---------------- */
+.schedule-item,
+.zoomMeeting-item {
     position: relative;
     padding: 8px;
     border-radius: 5px;
@@ -91,7 +96,8 @@
     cursor: pointer;
 }
 
-.schedule-item .delete-schedule {
+.schedule-item .delete-schedule,
+.zoomMeeting-item .delete-zoomMeeting {
     position: absolute;
     top: 5px;
     right: 5px;
@@ -101,19 +107,33 @@
     cursor: pointer;
 }
 
-.schedule-item .delete-schedule:hover {
+.schedule-item .delete-schedule:hover,
+.zoomMeeting-item .delete-zoomMeeting {
     color: red;
 }
 
-.schedule-item .schedule-title {
+.schedule-item .schedule-title,
+.zoomMeeting-item .zoomMeeting-topic_zoom {
     font-weight: bold;
 }
 
-.schedule-item .schedule-description {
+.schedule-item .schedule-description,
+.zoomMeeting-item .zoomMeeting-topic_zoom {
+    margin-top: 0.5rem;
+}
+.zoomMeeting-item .zoomMeeting-start_time{
+    margin-top: 0.5rem;
+}
+.zoomMeeting-item .zoomMeeting-end_time{
+    margin-top: 0.5rem;
+}
+.zoomMeeting-item .zoomMeeting-invited_users{
     margin-top: 0.5rem;
 }
 
-.schedule-item .schedule-color {
+/* ---------------- COLOR INDICATOR FOR SCHEDULE ---------------- */
+.schedule-item .schedule-color,
+.zoomMeeting-item .zoomMeeting-color{
     margin-top: 0.5rem;
     padding: 5px;
     border-radius: 3px;
@@ -122,6 +142,7 @@
     background-color: #ccc;
 }
 
+/* ---------------- SCHEDULE DETAILS CONTAINER ---------------- */
 .schedule-details-container {
     width: 48%;
     background-color: #f9f9f9;
@@ -132,14 +153,39 @@
     flex-direction: column;
     gap: 10px;
     visibility: hidden;
-    transition: visibility 0.3s ease;
+    opacity: 0; /* Initially hidden */
+    transition: visibility 0s, opacity 0.3s ease-in-out;
 }
 
 .schedule-details-container.visible {
     visibility: visible;
+    opacity: 1; /* Fade in */
 }
 
-.schedule-details-container .close-btn {
+.zoomMeeting-details-container {
+    width: 48%;
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    visibility: hidden;
+    opacity: 0; /* Initially hidden */
+    transition: visibility 0s, opacity 0.3s ease-in-out;
+}
+
+.zoomMeeting-details-container.visible {
+    visibility: visible;
+    opacity: 1; /* Fade in */
+}
+
+
+
+/* ---------------- CLOSE BUTTONS ---------------- */
+.schedule-details-container .close-btn,
+.zoomMeeting-details-container .close-btn {
     align-self: flex-end;
     background-color: #ff4d4d;
     color: white;
@@ -148,10 +194,12 @@
     cursor: pointer;
 }
 
-.schedule-details-container .close-btn:hover {
+.schedule-details-container .close-btn:hover,
+.zoomMeeting-details-container .close-btn:hover {
     background-color: #e60000;
 }
 
+/* ---------------- DROPDOWN MENU ---------------- */
 .dropdown-container {
     margin-top: 1rem;
     position: relative;
@@ -190,6 +238,7 @@
     background-color: #f2f2f2;
 }
 
+/* ---------------- BLOCKED DAY MESSAGE ---------------- */
 .blocked-day {
     background-color: #e74c3c;
     color: white;
@@ -198,6 +247,7 @@
     text-align: center;
 }
 
+/* ---------------- BLOCK FORM ---------------- */
 .block-form {
     margin-top: 1rem;
 }
@@ -218,14 +268,4 @@
 .block-form button:hover {
     background-color: #c0392b;
 }
-.file-preview img {
-    max-width: 200px;
-    margin-top: 10px;
-}
 
-.file-preview a {
-    display: inline-block;
-    margin-top: 10px;
-    text-decoration: none;
-    color: #007bff;
-}
