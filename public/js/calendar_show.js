@@ -31,26 +31,32 @@ document.getElementById('blockDropdownBtn').addEventListener('click', function()
     dropdownOptions.style.display = dropdownOptions.style.display === 'none' || dropdownOptions.style.display === '' ? 'block' : 'none';
 });
 
-document.getElementById('blockDayBtn').addEventListener('click', function() {
+document.getElementById('blockDayBtn')?.addEventListener('click', function() {
     const blockForm = document.getElementById('blockForm');
     blockForm.style.display = 'block'; 
     document.getElementById('dropdownOptions').style.display = 'none'; 
 });
 
-document.getElementById('block-form').addEventListener('submit', function(event) { 
+document.getElementById('block-form')?.addEventListener('submit', function(event) {
     event.preventDefault();
 
     const reason = document.getElementById('reason').value;
 
     if (reason) {
-        document.getElementById('blockDropdownBtn').innerText = 'Unblock This Day';
-        document.getElementById('blockDropdownBtn').removeEventListener('click', toggleBlockForm);
+        const blockDropdownBtn = document.getElementById('blockDropdownBtn');
+        blockDropdownBtn.innerText = 'Unblock This Day';
+        blockDropdownBtn.removeEventListener('click', toggleBlockForm);
+
+        blockDropdownBtn.addEventListener('click', function() {
+            document.getElementById('unblock-form').submit();
+        });
 
         const blockedReasonDiv = document.createElement('div');
         blockedReasonDiv.classList.add('blocked-reason');
         blockedReasonDiv.innerHTML = `<strong>Reason for Blocking:</strong> ${reason}`;
 
         document.querySelector('.calendar-day-details').appendChild(blockedReasonDiv);
+
         this.submit();
     }
 });
@@ -62,7 +68,7 @@ function toggleBlockForm() {
 
 //---------------------------------------------------------------------------------
 
-document.getElementById('createZoomMeeting').addEventListener('click', function () {
+document.getElementById('createZoomMeeting')?.addEventListener('click', function () {
     const zoomForm = document.getElementById('zoomForm');
     zoomForm.style.display = 'block';
     document.getElementById('dropdownOptions').style.display = 'none'; 
@@ -104,4 +110,7 @@ function deleteZoomMeeting(event, zoomMeetingId) {
         alert("An error occurred while trying to delete the zoom meeting.");
     });
 }
+
+
+
 
