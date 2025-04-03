@@ -96,3 +96,19 @@ body {
     border-radius: 8px;
     margin-bottom: 1rem;
 }
+
+/*----------------------------------------
+
+/* Dark color for creator meetings */
+.creator-meeting {
+    background-color: darkslategray;
+    margin-bottom: 1px;
+    padding: 5px;
+}
+
+/* Orange color for invited user meetings */
+.invited-meeting {
+    background-color: orange;
+    margin-bottom: 1px;
+    padding: 5px;
+}

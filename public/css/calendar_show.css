@@ -269,3 +269,16 @@
     background-color: #c0392b;
 }
 
+
+/*Error message*/
+.error-container {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #ffdddd;
+    border-left: 5px solid #ff4d4d;
+    color: #b30000;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 5px;
+}
+

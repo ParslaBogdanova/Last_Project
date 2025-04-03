@@ -170,3 +170,56 @@
     font-size: 0.9rem;
     color: #666;
 }
+
+/* -------------------------------- */
+
+.notifications {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+.notifications h3 {
+    margin-bottom: 8px;
+}
+.notifications ul {
+    list-style: none;
+    padding: 0;
+}
+.notifications li {
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+
+
+.reminder-popup {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+}
+
+.reminder-content {
+    font-size: 16px;
+}
+
+.reminder-content button {
+    background: none;
+    border: none;
+    color: #721c24;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.reminder-content button:hover {
+    text-decoration: underline;
+}
+
