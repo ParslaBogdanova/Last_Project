@@ -54,6 +54,18 @@ class User extends Authenticatable
         return $this-hasOne(Calenders::class);
     }
 
+    public function days(){
+        return $this->hasMany(Day::class);
+    }
+
+    public function schedules(){
+        return $this->hasManyThrough(Schedule::class, Day::class);
+    }
+
+    public function blockedDays(){
+        return $this->hasManyThrough(BlockedDays::class, Day::class);
+    }
+
     //----------------------------
 
     public function sentMessages()
@@ -74,11 +86,18 @@ class User extends Authenticatable
     //----------------------------
 
     public function createdZoomMeetings(){
-        return $this->hasMany(ZoomMeeting::class, 'user_id');
+        return $this->hasMany(ZoomMeeting::class, 'creator_id');
     }
-    public function zoomMeetingInvitations()
-    {
-        return $this->belongsToMany(ZoomMeeting::class, 'user_zoom_meetings', 'user_id', 'zoom_meetings_id');
+    public function zoomMeetings(){
+        return $this->belongsToMany(ZoomMeeting::class, 'user_zoom_meetings', 'user_id', 'zoom_meetings_id')
+                    ->withPivot('date', 'status');
+    }
+    
+    public function notifications(){
+        return $this->hasMany(Notification::class);
+    }
+    public function reminders(){
+        return $this->hasMany(ReminderZoomMeeting::class);
     }
     
 }
