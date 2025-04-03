@@ -17,18 +17,24 @@ class ZoomMeeting extends Model
         'invited_users',
         'start_time',
         'end_time',
-        'user_id',
-        'day_id',
+        'creator_id',
+        'date',
     ];
 
     public function day(){
         return $this->belongsTo(Day::class);
     }
-    public function users() {
-        return $this->belongsToMany(User::class, 'user_zoom_meetings', 'zoom_meetings_id', 'user_id');
+    public function invitedUsers()
+    {
+        return $this->belongsToMany(User::class, 'user_zoom_meetings', 'zoom_meetings_id', 'user_id')
+        ->withPivot('date', 'status');
     }
     
-    public function user(){
-        return $this->belongsTo(User::class);
+    public function creator(){
+        return $this->belongsTo(User::class, 'creator_id');
+    }
+
+    public function notifications(){
+        return $this->hasMany(Notification::class, 'zoom_meetings_id');
     }
 }
