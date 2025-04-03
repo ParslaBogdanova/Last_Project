@@ -7,13 +7,58 @@
     <main class="main-content">
         <div class="card-container">
             <div class="info-card">
-                <h1>More exchange messages</h1>
-                <p>Like discord and other things</p>
-            </div>
+                <h1>Notification</h1>
+                @if ($notifications->count() > 0)
+                    <div class="notifications">
+                        <ul>
+                            @foreach ($notifications as $notification)
+                                <li>
+                                    {{ $notification->message }}
+                                    @if ($notification->zoomMeeting)
+                                        (Created by: {{ $notification->zoomMeeting->creator->name }})
+                                    @endif
+                                    ({{ $notification->created_at->diffForHumans() }})
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @else
+                    <p>No notifications yet.</p>
+                @endif
 
+            </div>
             <div class="unread-messages">
-                <h1>Unread messages</h1>
-                <p>This will be after only I create a friends list.</p>
+                @foreach ($reminders as $reminder)
+                    @php
+                        $currentTime = \Carbon\Carbon::now('Europe/Riga');
+
+                        $startTime = \Carbon\Carbon::createFromFormat(
+                            'H:i',
+                            $reminder->zoomMeeting->start_time,
+                            'Europe/Riga',
+                        );
+
+                        $startTime->setDate($currentTime->year, $currentTime->month, $currentTime->day);
+                        $timeUntilMeeting = $currentTime->diff($startTime);
+                        $hoursLeft = $timeUntilMeeting->h;
+                        $minutesLeft = $timeUntilMeeting->i;
+                        $secondsLeft = $timeUntilMeeting->s;
+                    @endphp
+
+                    @if ($currentTime->lt($startTime))
+                        <li>
+                            <strong>Reminder:</strong> Your Zoom meeting
+                            <b>{{ $reminder->zoomMeeting->title_zoom }}</b> starts at
+                            <b>{{ $startTime->format('H:i') }}</b>!
+
+                            (Created by: {{ $reminder->zoomMeeting->creator->name }})
+                            <div>
+                                Countdown: {{ $hoursLeft }} hours, {{ $minutesLeft }} minutes, and
+                                {{ $secondsLeft }} seconds left.
+                            </div>
+                        </li>
+                    @endif
+                @endforeach
             </div>
 
             <div class="task-info">
@@ -40,7 +85,8 @@
                     @endforeach
                 </div>
 
-                <form id="create-task-form" class="task-form hidden" action="{{ route('tasks.store') }}" method="POST">
+                <form id="create-task-form" class="task-form hidden" action="{{ route('tasks.store') }}"
+                    method="POST">
                     @csrf
                     <label for="description">Description:</label>
                     <input type="text" id="description" name="description" placeholder="Description" required>
@@ -63,4 +109,5 @@
         </div>
 
     </main>
+
 </x-app-layout>
