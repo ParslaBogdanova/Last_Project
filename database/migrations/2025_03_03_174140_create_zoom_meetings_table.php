@@ -18,14 +18,14 @@ return new class extends Migration
             $table->time('start_time');
             $table->time('end_time')->nullable();
 
-            $table->unsignedBigInteger('day_id');
-            $table->foreign('day_id')->references('id')->on('days')->onDelete('cascade');
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
+            $table->date('date');
+            $table->unsignedBigInteger('creator_id');
+            $table->foreign('creator_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
-        \DB::table('zoom_meetings')->update(['user_id' => 1]);
+        \DB::table('zoom_meetings')->update(['creator_id' => 1]);
         Schema::table('zoom_meetings', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->nullable(false)->change();
+            $table->unsignedBigInteger('creator_id')->nullable(false)->change();
         });
     }
 

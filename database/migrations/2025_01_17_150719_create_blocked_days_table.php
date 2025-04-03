@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('blocked_days', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('calendar_id');
-            $table->unsignedBigInteger('day_id');
-            $table->foreign('day_id')->references('id')->on('days')->onDelete('cascade');
+            $table->date('date');
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('reason')->nullable();
             $table->boolean('status')->default(true);

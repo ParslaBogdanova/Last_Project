@@ -16,8 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('color', 7)->nullable();
-            $table->unsignedBigInteger('day_id');
-            $table->foreign('day_id')->references('id')->on('days')->onDelete('cascade'); 
+            $table->date('date');
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
