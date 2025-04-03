@@ -14,12 +14,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const filePreviewContainer = document.querySelector('.file-preview-container');
         const filePreviewArea = document.getElementById('filePreviewArea');
         
-        filePreviewArea.innerHTML = ''; // Clear previous previews
+        filePreviewArea.innerHTML = '';
     
         if (event.target.files.length > 0) {
-            filePreviewContainer.style.display = 'flex'; // Show container when files are selected
+            filePreviewContainer.style.display = 'flex';
         } else {
-            filePreviewContainer.style.display = 'none'; // Hide if no files are selected
+            filePreviewContainer.style.display = 'none';
         }
     
         Array.from(event.target.files).forEach(file => {
@@ -150,7 +150,7 @@ window.onload = function() {
         if (chatMessages) {
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
-    }, 100); // Small delay to ensure content loads first
+    }, 100);
 };
 
 
