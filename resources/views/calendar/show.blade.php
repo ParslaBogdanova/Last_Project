@@ -9,7 +9,7 @@
         <div class="form-container">
             <h2>Add Schedule</h2>
             <form method="POST"
-                action="{{ route('schedules.store', ['month' => $month, 'year' => $year, 'day_id' => $day->id]) }}">
+                action="{{ route('schedules.store', ['month' => $month, 'year' => $year, 'date' => $day->date]) }}">
                 @csrf
                 <div>
                     <label for="title">Title</label>
@@ -29,21 +29,25 @@
             </form>
 
             @if ($day->isBlocked)
-                <div class="blocked-day">
-                    <strong>This day is blocked.</strong><br>
-                    Reason: {{ $day->blockedDays->reason }}
-                </div>
+                @if ($day->blockedDays->where('user_id', Auth::id())->isNotEmpty())
+                    <div class="blocked-day">
+                        <strong>This day is blocked.</strong><br>
+                        Reason: {{ $day->blockedDays->where('user_id', Auth::id())->first()->reason }}
+                    </div>
+                @endif
             @endif
+
 
             <div class="calendar-container">
                 <div class="calendar-day-details">
-                    @if ($day->blockedDays()->exists())
+                    @if ($day->blockedDays->where('user_id', Auth::id())->isNotEmpty())
                         <div class="blocked-reason">
-                            <strong>Reason for Blocking:</strong> {{ $day->blockedDays()->first()->reason }}
+                            <strong>Reason for Blocking:</strong>
+                            {{ $day->blockedDays->where('user_id', Auth::id())->first()->reason }}
                         </div>
 
                         <form
-                            action="{{ route('calendar.unblock', ['month' => $month, 'year' => $year, 'day_id' => $day->id]) }}"
+                            action="{{ route('calendar.unblock', ['month' => $month, 'year' => $year, 'date' => $day->date]) }}"
                             method="POST" id="unblock-form">
                             @csrf
                             @method('DELETE')
@@ -60,7 +64,7 @@
 
                         <div id="blockForm" style="display: none;">
                             <form
-                                action="{{ route('calendar.blockDay', ['month' => $month, 'year' => $year, 'day_id' => $day->id]) }}"
+                                action="{{ route('calendar.blockDay', ['month' => $month, 'year' => $year, 'date' => $day->date]) }}"
                                 method="POST" id="block-form">
                                 @csrf
                                 <textarea name="reason" id="reason" rows="4" placeholder="Enter reason for blocking"></textarea>
@@ -69,7 +73,7 @@
                         </div>
                         <div id="zoomForm" style="display:none;">
                             <form
-                                action="{{ route('zoom_meetings.store', ['month' => $month, 'year' => $year, 'day_id' => $day->id]) }}"
+                                action="{{ route('zoom_meetings.store', ['month' => $month, 'year' => $year, 'date' => $day->date]) }}"
                                 method="POST" id="zoom-form">
                                 @csrf
                                 <div>
@@ -98,7 +102,18 @@
                                             </option>
                                         @endforeach
                                     </select>
+                                    @if (session('unavailable_users'))
+                                        <div id="error-message" style="color: red;">
+                                            <p>The following users are unavailable:</p>
+                                            <ul>
+                                                @foreach (session('unavailable_users') as $user)
+                                                    <li>{{ $user['name'] }} - {{ $user['reason'] }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
                                 </div>
+
                                 <button type="submit">Create Zoom Meeting</button>
                             </form>
                         </div>
@@ -111,38 +126,61 @@
         <div class="schedule-list-container">
             <h2>Existing Schedules</h2>
             @foreach ($day->schedules as $schedule)
-                <div class="schedule-item" data-id="{{ $schedule->id }}"
-                    style="background-color: {{ $schedule->color }};"
-                    onclick="openScheduleDetails({{ $schedule->id }})">
-                    <div class="delete-schedule" onclick="deleteSchedule(event, {{ $schedule->id }})">X</div>
-                    <div class="schedule-title">{{ $schedule->title }}</div>
-                    <div class="schedule-description">{{ $schedule->description }}</div>
-                </div>
-            @endforeach
-
-            @foreach ($day->zoomMeetings as $zoomMeeting)
-                <div class="zoomMeeting-item" data-id="{{ $zoomMeeting->id }}" style="background-color:darkslategrey"
-                    onclick="openZoomMeeting({{ $zoomMeeting->id }})">
-                    <div class="delete-zoomMeeting" onclick="deleteZoomMeeting(event, {{ $zoomMeeting->id }})">X</div>
-                    <div class="zoomMeeting-title_zoom">{{ $zoomMeeting->title_zoom }}</div>
-                    <div class="zoomMeeting-topic_zoom">{{ $zoomMeeting->topic_zoom }}</div>
-                    <div class="zoomMeeting-start_time">{{ $zoomMeeting->start_time }}</div>
-                    <div class="zoomMeeting-end_time">{{ $zoomMeeting->end_time }}</div>
-                    <div class="zoomMeeting-invited_users">
-                        @if ($zoomMeeting->users->isNotEmpty())
-                            @foreach ($zoomMeeting->users as $invitedUser)
-                                <span>{{ $invitedUser->name }}</span>
-                                @if (!$loop->last)
-                                    ,
-                                @endif
-                            @endforeach
-                        @else
-                            <span>No users invited</span>
-                        @endif
+                @if ($schedule->user_id === Auth::id())
+                    <div class="schedule-item" data-id="{{ $schedule->id }}"
+                        style="background-color: {{ $schedule->color }};"
+                        onclick="openScheduleDetails({{ $schedule->id }})">
+                        <div class="delete-schedule" onclick="deleteSchedule(event, {{ $schedule->id }})">X</div>
+                        <div class="schedule-title">{{ $schedule->title }}</div>
+                        <div class="schedule-description">{{ $schedule->description }}</div>
                     </div>
-                </div>
+                @endif
             @endforeach
 
+
+            @foreach ($zoomMeetings as $zoomMeeting)
+                @php
+                    $isCreator = $zoomMeeting->creator_id === auth()->id();
+                    $isInvited = $zoomMeeting->invitedUsers->pluck('id')->contains(auth()->id());
+                    $bgColor = $isCreator ? '#99d0d1' : ($isInvited ? 'orange' : 'lightgrey');
+                @endphp
+
+                @if ($isCreator || $isInvited)
+                    <div class="zoomMeeting-item" data-id="{{ $zoomMeeting->id }}"
+                        style="background-color: {{ $bgColor }};"
+                        @if ($isCreator) onclick="openZoomMeeting({{ $zoomMeeting->id }})" @endif>
+
+                        @if ($isCreator)
+                            <div class="delete-zoomMeeting" onclick="deleteZoomMeeting(event, {{ $zoomMeeting->id }})">
+                                X
+                            </div>
+                        @endif
+
+                        <div class="zoomMeeting-title_zoom"><strong>Title:</strong> {{ $zoomMeeting->title_zoom }}
+                        </div>
+                        <div class="zoomMeeting-topic_zoom"><strong>Topic:</strong> {{ $zoomMeeting->topic_zoom }}
+                        </div>
+                        <div class="zoomMeeting-start_time"><strong>Start Time:</strong> {{ $zoomMeeting->start_time }}
+                        </div>
+                        <div class="zoomMeeting-end_time"><strong>End Time:</strong> {{ $zoomMeeting->end_time }}</div>
+
+                        <div class="zoomMeeting-invited_users">
+                            @if ($isCreator)
+                                <strong>Invited Users:</strong>
+                                @if ($zoomMeeting->invitedUsers->isNotEmpty())
+                                    @foreach ($zoomMeeting->invitedUsers as $invitedUser)
+                                        <span>{{ $invitedUser->name }}</span>{{ !$loop->last ? ', ' : '' }}
+                                    @endforeach
+                                @else
+                                    <span>No users invited</span>
+                                @endif
+                            @else
+                                <strong>Creator:</strong> {{ $zoomMeeting->creator->name }}
+                            @endif
+                        </div>
+                    </div>
+                @endif
+            @endforeach
             @if ($day->schedules->count() === 0)
                 <p>No schedules for this day.</p>
             @endif
@@ -175,6 +213,16 @@
         <div class="zoomMeeting-details-container" id="zoomMeetingDetailsContainer">
             <button class="close-btn" onclick="closeZoomMeetingDetails()">X</button>
             <h2>Edit ZoomMeeting</h2>
+            @if (session('unavailable_users'))
+                <div id="error-message" style="color: red; margin-bottom: 20px;">
+                    <p>The following users are unavailable:</p>
+                    <ul>
+                        @foreach (session('unavailable_users') as $user)
+                            <li>{{ $user['name'] }} - {{ $user['reason'] }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <form method="POST" id="editZoomMeeting">
                 @csrf
                 @method('PUT')
@@ -209,6 +257,7 @@
                 </div>
                 <button type="submit">Update Meeting</button>
             </form>
+
         </div>
     </div>
 
@@ -226,11 +275,11 @@
             detailsContainer.classList.add('visible');
 
             document.getElementById('editScheduleForm').action =
-                "{{ route('schedules.update', ['month' => $month, 'year' => $year, 'day_id' => $day->id, 'id' => '']) }}/" +
+                "{{ route('schedules.update', ['month' => $month, 'year' => $year, 'date' => $day->date, 'id' => '']) }}/" +
                 selectedSchedule.id;
         }
 
-        let invitedUsers = []; // Store invited users globally
+        let invitedUsers = [];
 
         function openZoomMeeting(zoomMeetingId) {
             const zoomMeetings = @json($day->zoomMeetings);
@@ -249,23 +298,19 @@
             document.getElementById('edit_start_time').value = selectedZoomMeeting.start_time;
             document.getElementById('edit_end_time').value = selectedZoomMeeting.end_time;
 
-            // Load invited users only on first open
             if (invitedUsers.length === 0) {
                 invitedUsers = selectedZoomMeeting.invited_users || selectedZoomMeeting.users.map(user => user.id) || [];
             }
 
             updateInvitedUsersUI();
 
-            // Fix: Dynamically update the form action URL
             document.getElementById('editZoomMeeting').action =
-                "{{ route('zoom_meetings.update', ['month' => $month, 'year' => $year, 'day_id' => $day->id, 'id' => '']) }}/" +
+                "{{ route('zoom_meetings.update', ['month' => $month, 'year' => $year, 'date' => $day->date, 'id' => '']) }}/" +
                 selectedZoomMeeting.id;
 
-            // Make the form visible
             document.getElementById('zoomMeetingDetailsContainer').classList.add('visible');
         }
 
-        // Update the UI without refreshing the entire form
         function updateInvitedUsersUI() {
             const allUsers = @json($users);
             const invitedUsersList = document.getElementById('invitedUsersList');
@@ -274,7 +319,6 @@
             invitedUsersList.innerHTML = '';
             invitedUsersSelect.innerHTML = '';
 
-            // Show already invited users with remove ("-") button
             invitedUsers.forEach(userId => {
                 let user = allUsers.find(u => u.id == userId);
                 if (user) {
@@ -285,16 +329,14 @@
                 }
             });
 
-            // Attach event listener to remove buttons
             document.querySelectorAll('.remove-user').forEach(button => {
                 button.addEventListener('click', function() {
                     let userId = this.getAttribute('data-user-id');
                     invitedUsers = invitedUsers.filter(id => id != userId);
-                    updateInvitedUsersUI(); // Update only the invited users list
+                    updateInvitedUsersUI();
                 });
             });
 
-            // Show only uninvited users in dropdown
             const invitedUsersSet = new Set(invitedUsers);
             allUsers.forEach(user => {
                 if (!invitedUsersSet.has(user.id)) {
@@ -305,12 +347,11 @@
                 }
             });
 
-            // Handle adding a new invited user
             invitedUsersSelect.addEventListener('change', function() {
                 let newUserId = this.value;
                 if (newUserId && !invitedUsers.includes(newUserId)) {
                     invitedUsers.push(newUserId);
-                    updateInvitedUsersUI(); // Only update the user list
+                    updateInvitedUsersUI();
                 }
             });
         }
