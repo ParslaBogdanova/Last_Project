@@ -43,21 +43,37 @@
                     $isToday = $day->date === $today;
                     $isBlocked = $day->blockedDays()->exists();
                 @endphp
-                <a href="{{ route('calendar.show', ['month' => $month, 'year' => $year, 'day_id' => $day->id]) }}">
-                    <div class="calendar-day {{ $isToday ? 'today' : '' }} {{ $isBlocked ? 'blocked' : '' }}">
+                <a href="{{ route('calendar.show', ['month' => $month, 'year' => $year, 'date' => $day->date]) }}">
+                    <div
+                        class="calendar-day {{ $isToday ? 'today' : '' }} {{ $day->blockedDays->where('user_id', Auth::id())->isNotEmpty() ? 'blocked' : '' }}">
                         <span class="day-number">{{ \Carbon\Carbon::parse($day->date)->day }}</span>
                         <div class="schedules">
                             @foreach ($day->schedules as $schedule)
-                                <div class="schedule-item" style="background-color: {{ $schedule->color }};">
-                                    {{ $schedule->title }}
-                                </div>
+                                @if ($schedule->user_id === Auth::id())
+                                    <div class="schedule-item" style="background-color: {{ $schedule->color }};">
+                                        {{ $schedule->title }}
+                                    </div>
+                                @endif
                             @endforeach
+
                         </div>
                         <div class="zoomMeetings">
-                            @foreach ($day->zoomMeetings as $zoomMeeting)
-                                <div class="zoomMeeting-item" style="background-color:darkslategray;">
-                                    {{ $zoomMeeting->title_zoom }}
-                                </div>
+                            @foreach ($zoomMeetings as $zoomMeeting)
+                                @php
+                                    $zoomMeetingDate = \Carbon\Carbon::parse($zoomMeeting->date);
+                                @endphp
+
+                                @if ($day->date == $zoomMeetingDate->toDateString())
+                                    @if ($zoomMeeting->creator_id === Auth::id())
+                                        <div class="zoomMeeting-item" style="background-color:#99d0d1;">
+                                            {{ $zoomMeeting->title_zoom }}
+                                        </div>
+                                    @elseif($zoomMeeting->invitedUsers->pluck('id')->contains(Auth::id()))
+                                        <div class="zoomMeeting-item" style="background-color:orange;">
+                                            {{ $zoomMeeting->title_zoom }}
+                                        </div>
+                                    @endif
+                                @endif
                             @endforeach
                         </div>
                     </div>
