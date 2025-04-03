@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Calendar;
 use App\Models\Day;
 use App\Models\User;
+use App\Models\ZoomMeeting;
 use App\Models\BlockedDays;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -17,7 +18,7 @@ class CalendarController extends Controller
         $currentDate = Carbon::now();
         $month = $month ?? $currentDate->month;
         $year = $year ?? $currentDate->year;
-
+    
         $calendar = Calendar::firstOrCreate(
             [
                 'year' => $year,
@@ -25,62 +26,90 @@ class CalendarController extends Controller
                 'user_id' => Auth::id(),
             ]
         );
-
+    
         $this->generateDaysForMonth($calendar);
-
+    
         $prevMonth = $month == 1 ? 12 : $month - 1;
         $prevYear = $month == 1 ? $year - 1 : $year;
         $nextMonth = $month == 12 ? 1 : $month + 1;
         $nextYear = $month == 12 ? $year + 1 : $year;
-
+    
+        $user = Auth::user();
+    
+        $zoomMeetings = ZoomMeeting::all();
+    
+        $this->generateDaysForMonth($calendar);
+    
         return view('calendar.index', [
             'calendar' => $calendar,
-            'days' => $calendar->days,
+            'days' => $calendar->days()->get(),
             'prevMonth' => $prevMonth,
             'prevYear' => $prevYear,
             'nextMonth' => $nextMonth,
             'nextYear' => $nextYear,
             'year' => $year,
             'month' => $month,
+            'zoomMeetings' => $zoomMeetings, 
         ]);
+        
     }
+    
 
 
-
-    public function show($month, $year, $day_id)
+    public function show($month, $year, $date)
     {
-        $day = Day::with(['schedules', 'blockedDays', 'zoomMeetings'])->findOrFail($day_id);
-
-        if ($day->calendar->user_id !== Auth::id() || $day->calendar->month != $month || $day->calendar->year != $year) {
+        $day = Day::with([
+            'schedules',
+            'blockedDays',
+            'zoomMeetings',
+            'zoomMeetings.invitedUsers'
+        ])->whereHas('calendar', function ($query) {
+            $query->where('user_id', Auth::id());
+        })->where('date', $date)->firstOrFail();
+    
+        if ($day->calendar->month != $month || $day->calendar->year != $year) {
             abort(403, 'Unauthorized action.');
         }
+    
+        $userId = Auth::id();
+    
+        $zoomMeetings = ZoomMeeting::with(['invitedUsers', 'creator'])
+            ->where('date', $day->date) 
+            ->where(function ($query) use ($userId) {
+                $query->where('creator_id', $userId)
+                      ->orWhereHas('invitedUsers', function ($subQuery) use ($userId) {
+                          $subQuery->where('user_id', $userId);
+                      });
+            })
+            ->get();
+    
         $users = User::where('id', '!=', Auth::id())->get();
-
+    
         return view('calendar.show', [
             'day' => $day,
             'schedules' => $day->schedules,
             'blockedDays' => $day->blockedDays,
-            'zoomMeetings' => $day->zoomMeetings,
+            'zoomMeetings' => $zoomMeetings,
             'month' => $month,
             'year' => $year,
             'users' => $users,
         ]);
     }
+    
 
+private function generateDaysForMonth(Calendar $calendar)
+{
+    $firstDayOfMonth = Carbon::create($calendar->year, $calendar->month, 1);
+    $daysInMonth = $firstDayOfMonth->daysInMonth;
 
-
-    private function generateDaysForMonth(Calendar $calendar)
-    {
-        $firstDayOfMonth = Carbon::create($calendar->year, $calendar->month, 1);
-        $daysInMonth = $firstDayOfMonth->daysInMonth;
-
-        foreach (range(1, $daysInMonth) as $day) {
-            Day::firstOrCreate([
-                'calendar_id' => $calendar->id,
-                'date' => $firstDayOfMonth->copy()->day($day)->toDateString(),
-            ]);
-        }
+    foreach (range(1, $daysInMonth) as $day) {
+        Day::firstOrCreate([
+            'calendar_id' => $calendar->id,
+            'date' => $firstDayOfMonth->copy()->day($day)->toDateString(),
+        ]);
     }
+}
+
 
 
 
@@ -100,31 +129,35 @@ class CalendarController extends Controller
 
 
 
-    public function blockDay(Request $request, $month, $year, $day_id) {
-
-    $userId = Auth::id();
-        if (!$userId) {
-            return redirect()->back()->with('error', 'User is not authenticated.');
-        }
-
-    $day = Day::findOrFail($day_id);
-
-    $blockedDay = BlockedDays::updateOrCreate(
-        ['day_id' => $day_id, 'user_id' => $userId], 
-        [
-            'reason' => $request->input('reason'),
-            'status' => true,
-            'calendar_id' => $day->calendar_id,
-        ]
-    );
-
-    return redirect()->back()->with('success', 'Day blocked successfully.');
-}
-
+    public function blockDay(Request $request, $month, $year, $date)
+    {
+        $userId = Auth::id();
     
-
-    public function unblock(Request $request, $month, $year, $day_id) {
-        $blockedDay = BlockedDays::where('day_id', $day_id)->first();
+        $day = Day::where('date', $date)
+                  ->whereHas('calendar', function ($query) use ($userId) {
+                      $query->where('user_id', $userId);
+                  })
+                  ->firstOrFail();
+    
+        if ($day->calendar->user_id !== $userId) {
+            abort(403, 'Unauthorized action.');
+        }
+    
+        $blockedDay = BlockedDays::updateOrCreate(
+            ['date' => $date, 'user_id' => $userId], 
+            [
+                'reason' => $request->input('reason'),
+                'status' => true,
+                'calendar_id' => $day->calendar_id,
+            ]
+        );
+    
+        return redirect()->route('calendar.show', ['month' => $month, 'year' => $year, 'date' => $day->date])
+                         ->with('status', 'Day blocked!');
+    }
+    
+    public function unblock(Request $request, $month, $year, $date) {
+        $blockedDay = BlockedDays::where('date', $date)->first();
     
         if ($blockedDay) {
             $blockedDay->delete();
