@@ -6,6 +6,8 @@ use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ZoomMeetingController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ReminderZoomMeetingController;
 use App\Http\Controllers\Auth\SocialiteController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,44 +21,41 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Task Routes (Requires Authentication)
 Route::middleware('auth')->group(function () {
     Route::resource('tasks', TaskController::class);
     Route::patch('/tasks/{task}/update-completed', [TaskController::class, 'updateCompleted'])->name('tasks.update-completed');
     Route::patch('/tasks/resetWeeklyData', [TaskController::class, 'resetWeeklyData'])->name('tasks.resetWeeklyData');
+    Route::get('/tasks/notifications', [NotificationController::class, 'index'])->name('notifications.index');
 });
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/calendar/{month?}/{year?}', [CalendarController::class, 'index'])->name('calendar.index');
-    Route::get('/calendar/{month}/{year}/{day_id}', [CalendarController::class, 'show'])->name('calendar.show');
+    Route::get('/calendar/{month}/{year}/{date}', [CalendarController::class, 'show'])->name('calendar.show');
 
-    Route::get('/calendar/{month}/{year}/{day_id}/schedules', [ScheduleController::class, 'index'])
-        ->name('schedules.index');
-    Route::get('/calendar/{month}/{year}/{day_id}/schedules/create', [ScheduleController::class, 'create'])
+    Route::get('/calendar/{month}/{year}/{date}/schedules/create', [ScheduleController::class, 'create'])
         ->name('schedules.create');
-    Route::post('/calendar/{month}/{year}/{day_id}/schedules', [ScheduleController::class, 'store'])
+    Route::post('/calendar/{month}/{year}/{date}/schedules', [ScheduleController::class, 'store'])
         ->name('schedules.store');
-    Route::get('/calendar/{month}/{year}/{day_id}/schedules/edit', [ScheduleController::class, 'edit'])
+    Route::get('/calendar/{month}/{year}/{date}/schedules/edit', [ScheduleController::class, 'edit'])
         ->name('schedules.edit');
-    Route::put('/calendar/{month}/{year}/{day_id}/schedules', [ScheduleController::class, 'update'])
+    Route::put('/calendar/{month}/{year}/{date}/schedules', [ScheduleController::class, 'update'])
         ->name('schedules.update');
-    Route::delete('/calendar/{month}/{year}/{day_id}/schedules/{schedule_id}', [ScheduleController::class, 'destroy'])
+    Route::delete('/calendar/{month}/{year}/{date}/schedules/{schedule_id}', [ScheduleController::class, 'destroy'])
     ->name('schedules.destroy');
-    Route::post('/calendar/{month}/{year}/{day_id}/block', [CalendarController::class, 'blockDay'])->name('calendar.blockDay');
-Route::delete('/calendar/{month}/{year}/{day_id}/unblock', [CalendarController::class, 'unblock'])->name('calendar.unblock');
 
+    Route::post('/calendar/{month}/{year}/{date}/block', [CalendarController::class, 'blockDay'])->name('calendar.blockDay');
+Route::delete('/calendar/{month}/{year}/{date}/unblock', [CalendarController::class, 'unblock'])->name('calendar.unblock');
 
-Route::get('/calendar/{month}/{year}/{day_id}/zoom_meetings', [ZoomMeetingController::class, 'index'])
-->name('zoom_meetings.index');
-Route::get('/calendar/{month}/{year}/{day_id}/zoom_meetings/create', [ZoomMeetingController::class, 'create'])
+Route::get('/calendar/{month}/{year}/{date}/zoom_meetings/create', [ZoomMeetingController::class, 'create'])
 ->name('zoom_meetings.create');
-Route::post('/calendar/{month}/{year}/{day_id}/zoom_meetings', [ZoomMeetingController::class, 'store'])
+Route::post('/calendar/{month}/{year}/{date}/zoom_meetings', [ZoomMeetingController::class, 'store'])
 ->name('zoom_meetings.store');
-Route::get('/calendar/{month}/{year}/{day_id}/zoom_meetings/{zoom_meetings_id}/edit', [ZoomMeetingController::class, 'edit'])
+Route::get('/calendar/{month}/{year}/{date}/zoom_meetings/{zoom_meetings_id}/edit', [ZoomMeetingController::class, 'edit'])
 ->name('zoom_meetings.edit');
-Route::put('/calendar/{month}/{year}/{day_id}/zoom_meetings', [ZoomMeetingController::class, 'update'])
+Route::put('/calendar/{month}/{year}/{date}/zoom_meetings', [ZoomMeetingController::class, 'update'])
 ->name('zoom_meetings.update');
-Route::delete('/calendar/{month}/{year}/{day_id}/zoom_meetings/{zoom_meetings_id}', [ZoomMeetingController::class, 'destroy'])
+Route::delete('/calendar/{month}/{year}/{date}/zoom_meetings/{zoom_meetings_id}', [ZoomMeetingController::class, 'destroy'])
 ->name('zoom_meetings.destroy');
 });
 
