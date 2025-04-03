@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('days', function (Blueprint $table) {
             $table->id();
             $table->foreignId('calendar_id')->constrained();
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->date('date');
             $table->timestamps();
         });
