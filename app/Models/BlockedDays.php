@@ -11,17 +11,14 @@ class BlockedDays extends Model
 
     protected $fillable = [
         'calendar_id',
-        'day_id',
+        'date',
         'user_id',
         'reason',
+        'status',
     ];
 
-    public function calendar(){
-        return $this->belongsTo(Calendar::class);
-    }
-
     public function days(){
-        return $this->belongsTo(Day::class);
+        return $this->belongsTo(Day::class, 'date', 'date');
     }
 
     public function user(){

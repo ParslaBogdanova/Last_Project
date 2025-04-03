@@ -14,7 +14,7 @@ class Schedule extends Model
         'title',
         'color',
         'user_id',
-        'day_id',
+        'date',
     ];
 
     public function user()
@@ -24,7 +24,7 @@ class Schedule extends Model
 
     public function day()
     {
-        return $this->belongsTo(Day::class);
+        return $this->belongsTo(Day::class, 'date', 'date');
     }
 
 }

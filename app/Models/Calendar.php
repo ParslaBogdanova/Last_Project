@@ -21,4 +21,9 @@ class Calendar extends Model
     public function user(){
         return $this->belongsTo(User::class);
     }
+
+    public function zoomMeetings()
+{
+    return $this->hasManyThrough(ZoomMeeting::class, Day::class);
+}
 }

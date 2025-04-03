@@ -11,6 +11,7 @@ class Day extends Model
 
     protected $fillable = [
         'date',
+        'user_id',
         'calendar_id',
     ];
 
@@ -19,14 +20,18 @@ class Day extends Model
     }
 
     public function schedules(){
-        return $this->hasMany(Schedule::class, 'day_id');
+        return $this->hasMany(Schedule::class, 'date', 'date');
     }
 
     public function zoomMeetings(){
-        return $this->hasMany(ZoomMeeting::class, 'day_id');
+        return $this->hasMany(ZoomMeeting::class, 'date', 'date');
     }
 
     public function blockedDays(){
-        return $this->hasMany(BlockedDays::class);
+        return $this->hasMany(BlockedDays::class, 'date', 'date'); //'date' twice->telling Laravel how to connect the two models through their foreign key.
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class);
     }
 }
