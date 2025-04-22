@@ -15,15 +15,14 @@ class Calendar extends Model
         'user_id',
     ];
 
-    public function days(){
+    public function days() {
         return $this->hasMany(Day::class);
     }
-    public function user(){
+    public function user() {
         return $this->belongsTo(User::class);
     }
 
-    public function zoomMeetings()
-{
-    return $this->hasManyThrough(ZoomMeeting::class, Day::class);
-}
+    public function zoomMeetings() {
+        return $this->hasManyThrough(ZoomMeeting::class, Day::class);
+    }
 }

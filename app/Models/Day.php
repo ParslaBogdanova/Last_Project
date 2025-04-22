@@ -15,23 +15,23 @@ class Day extends Model
         'calendar_id',
     ];
 
-    public function calendar(){
+    public function calendar() {
         return $this->belongsTo(Calendar::class);
     }
 
-    public function schedules(){
+    public function schedules() {
         return $this->hasMany(Schedule::class, 'date', 'date');
     }
 
-    public function zoomMeetings(){
+    public function zoomMeetings() {
         return $this->hasMany(ZoomMeeting::class, 'date', 'date');
     }
 
-    public function blockedDays(){
+    public function blockedDays() {
         return $this->hasMany(BlockedDays::class, 'date', 'date'); //'date' twice->telling Laravel how to connect the two models through their foreign key.
     }
 
-    public function user(){
+    public function user() {
         return $this->belongsTo(User::class);
     }
 }

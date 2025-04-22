@@ -14,14 +14,9 @@ function deleteSchedule(event, scheduleId) {
         },
     }).then(response => {
         if (response.ok) {
-            alert('Schedule deleted successfully.');
             location.reload();
-        } else {
-            alert("Failed to delete the schedule.");
-        }
-    }).catch(error => {
-        alert("An error occurred while trying to delete the schedule.");
-    });
+        } 
+    })
 }
 
 //---------------------------------------------------------------------------------
@@ -101,14 +96,9 @@ function deleteZoomMeeting(event, zoomMeetingId) {
         },
     }).then(response => {
         if (response.ok) {
-            alert('Zoom Meeting deleted successfully.');
             location.reload();
-        } else {
-            alert("Failed to delete the zoom meeting.");
         }
-    }).catch(error => {
-        alert("An error occurred while trying to delete the zoom meeting.");
-    });
+    })
 }
 
 

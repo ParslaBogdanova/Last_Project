@@ -17,11 +17,11 @@ class BlockedDays extends Model
         'status',
     ];
 
-    public function days(){
+    public function days() {
         return $this->belongsTo(Day::class, 'date', 'date');
     }
 
-    public function user(){
+    public function user() {
         return $this->belongsTo(User::class);
     }
 }

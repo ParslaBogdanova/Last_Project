@@ -17,14 +17,11 @@ class Schedule extends Model
         'date',
     ];
 
-    public function user()
-    {
+    public function user() {
         return $this->belongsTo(User::class);
     }
 
-    public function day()
-    {
+    public function day() {
         return $this->belongsTo(Day::class, 'date', 'date');
     }
-
 }

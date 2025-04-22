@@ -213,16 +213,6 @@
         <div class="zoomMeeting-details-container" id="zoomMeetingDetailsContainer">
             <button class="close-btn" onclick="closeZoomMeetingDetails()">X</button>
             <h2>Edit ZoomMeeting</h2>
-            @if (session('unavailable_users'))
-                <div id="error-message" style="color: red; margin-bottom: 20px;">
-                    <p>The following users are unavailable:</p>
-                    <ul>
-                        @foreach (session('unavailable_users') as $user)
-                            <li>{{ $user['name'] }} - {{ $user['reason'] }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
             <form method="POST" id="editZoomMeeting">
                 @csrf
                 @method('PUT')
@@ -253,6 +243,16 @@
                             </option>
                         @endforeach
                     </select>
+                    @if (session('unavailable_users'))
+                        <div id="error-message" style="color: red;">
+                            <p>The following users are unavailable:</p>
+                            <ul>
+                                @foreach (session('unavailable_users') as $user)
+                                    <li>{{ $user['name'] }} - {{ $user['reason'] }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     <div id="invitedUsersList"></div>
                 </div>
                 <button type="submit">Update Meeting</button>
@@ -278,6 +278,8 @@
                 "{{ route('schedules.update', ['month' => $month, 'year' => $year, 'date' => $day->date, 'id' => '']) }}/" +
                 selectedSchedule.id;
         }
+
+
 
         let invitedUsers = [];
 
@@ -319,24 +321,6 @@
             invitedUsersList.innerHTML = '';
             invitedUsersSelect.innerHTML = '';
 
-            invitedUsers.forEach(userId => {
-                let user = allUsers.find(u => u.id == userId);
-                if (user) {
-                    let userItem = document.createElement('div');
-                    userItem.innerHTML = `<span>${user.name} </span>
-                <button type="button" class="remove-user" data-user-id="${user.id}">-</button>`;
-                    invitedUsersList.appendChild(userItem);
-                }
-            });
-
-            document.querySelectorAll('.remove-user').forEach(button => {
-                button.addEventListener('click', function() {
-                    let userId = this.getAttribute('data-user-id');
-                    invitedUsers = invitedUsers.filter(id => id != userId);
-                    updateInvitedUsersUI();
-                });
-            });
-
             const invitedUsersSet = new Set(invitedUsers);
             allUsers.forEach(user => {
                 if (!invitedUsersSet.has(user.id)) {
@@ -344,14 +328,6 @@
                     option.value = user.id;
                     option.textContent = user.name;
                     invitedUsersSelect.appendChild(option);
-                }
-            });
-
-            invitedUsersSelect.addEventListener('change', function() {
-                let newUserId = this.value;
-                if (newUserId && !invitedUsers.includes(newUserId)) {
-                    invitedUsers.push(newUserId);
-                    updateInvitedUsersUI();
                 }
             });
         }

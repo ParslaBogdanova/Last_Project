@@ -8,10 +8,11 @@ use App\Http\Controllers\ZoomMeetingController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReminderZoomMeetingController;
+use App\Http\Controllers\ZoomCallController;
+
 use App\Http\Controllers\Auth\SocialiteController;
 use Illuminate\Support\Facades\Route;
 
-// Public Routes
 Route::get('/', function () {
     return view('welcome');
 });
@@ -37,15 +38,13 @@ Route::middleware('auth')->group(function () {
         ->name('schedules.create');
     Route::post('/calendar/{month}/{year}/{date}/schedules', [ScheduleController::class, 'store'])
         ->name('schedules.store');
-    Route::get('/calendar/{month}/{year}/{date}/schedules/edit', [ScheduleController::class, 'edit'])
-        ->name('schedules.edit');
     Route::put('/calendar/{month}/{year}/{date}/schedules', [ScheduleController::class, 'update'])
         ->name('schedules.update');
     Route::delete('/calendar/{month}/{year}/{date}/schedules/{schedule_id}', [ScheduleController::class, 'destroy'])
     ->name('schedules.destroy');
 
     Route::post('/calendar/{month}/{year}/{date}/block', [CalendarController::class, 'blockDay'])->name('calendar.blockDay');
-Route::delete('/calendar/{month}/{year}/{date}/unblock', [CalendarController::class, 'unblock'])->name('calendar.unblock');
+    Route::delete('/calendar/{month}/{year}/{date}/unblock', [CalendarController::class, 'unblock'])->name('calendar.unblock');
 
 Route::get('/calendar/{month}/{year}/{date}/zoom_meetings/create', [ZoomMeetingController::class, 'create'])
 ->name('zoom_meetings.create');
@@ -63,22 +62,24 @@ Route::delete('/calendar/{month}/{year}/{date}/zoom_meetings/{zoom_meetings_id}'
 Route::middleware('auth')->group(function () {
     Route::resource('messages', MessageController::class);
     Route::get('/messages/{user_id}', [MessageController::class, 'show'])->name('messages.show');
-    Route::post('/messages/{user_id}', [MessageController::class, 'store']);
+    Route::post('/messages/{user_id}', [MessageController::class, 'store'])->name('messages.store');
 });
 
 
-// Profile Management (Requires Authentication)
+Route::middleware('auth')->group(function () {
+    Route::get('/zoom-meeting', [ZoomCallController::class, 'index'])->name('zoom-meeting.index');
+});
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Socialite Routes (Optional - If you're using Socialite for third-party login)
 Route::middleware('guest')->group(function () {
     Route::get('/auth/redirect', [SocialiteController::class, 'redirectToProvider'])->name('auth.redirect');
     Route::get('/auth/callback', [SocialiteController::class, 'handleProviderCallback'])->name('auth.callback');
 });
 
-// Include Authentication Routes
 require __DIR__.'/auth.php';

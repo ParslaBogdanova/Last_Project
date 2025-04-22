@@ -13,10 +13,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
-class TaskController extends Controller
-{
-    public function index()
-    {
+class TaskController extends Controller {
+    public function index() {
         $weekStart = Carbon::now()->startOfWeek();
         $weekEnd = Carbon::now()->endOfWeek();
         $userId = Auth::id(); 
@@ -45,8 +43,8 @@ class TaskController extends Controller
     }
     
     
-    public function store(Request $request)
-    {
+
+    public function store(Request $request) {
         $request->validate([
             'description' => 'required|string|max:255',
         ]);
@@ -60,25 +58,26 @@ class TaskController extends Controller
         return redirect()->route('tasks.index');
     }
 
-    public function destroy($id)
-    {
+
+
+    public function destroy($id) {
         $task = Task::where('user_id', Auth::id())->findOrFail($id);
         $task->delete();
 
         return redirect()->route('tasks.index');
     }
 
-    public function updateCompleted(Request $request, $id)
-    {
+    
+
+    public function updateCompleted(Request $request, $id) {
         $task = Task::where('user_id', Auth::id())->findOrFail($id);
         $task->completed = $request->completed;
         $task->save();
-
-        return response()->json(['message' => 'Task updated successfully.']);
     }
 
-    public function resetWeeklyData()
-    {
+
+    
+    public function resetWeeklyData() {
         $weekEnd = Carbon::now()->endOfWeek();
     }
 }

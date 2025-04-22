@@ -46,58 +46,50 @@ class User extends Authenticatable
         ];
     }
 
-    public function tools(){
-        return $this->hasMany(UserTool::class);
-    }
-
-    public function calenders(){
+    public function calenders() {
         return $this-hasOne(Calenders::class);
     }
 
-    public function days(){
+    public function days() {
         return $this->hasMany(Day::class);
     }
 
-    public function schedules(){
+    public function schedules() {
         return $this->hasManyThrough(Schedule::class, Day::class);
     }
 
-    public function blockedDays(){
+    public function blockedDays() {
         return $this->hasManyThrough(BlockedDays::class, Day::class);
     }
 
     //----------------------------
 
-    public function sentMessages()
-    {
+    public function sentMessages() {
         return $this->hasMany(Message::class, 'sender_id');
     }
     
-    public function receivedMessages()
-    {
+    public function receivedMessages() {
         return $this->hasMany(Message::class, 'receiver_id');
     }
     
-    public function contacts()
-    {
+    public function contacts() {
         return $this->belongsToMany(User::class, 'contacts', 'user_id', 'contact_id');
     }
 
     //----------------------------
 
-    public function createdZoomMeetings(){
+    public function createdZoomMeetings() {
         return $this->hasMany(ZoomMeeting::class, 'creator_id');
     }
-    public function zoomMeetings(){
+    public function zoomMeetings() {
         return $this->belongsToMany(ZoomMeeting::class, 'user_zoom_meetings', 'user_id', 'zoom_meetings_id')
                     ->withPivot('date', 'status');
     }
     
-    public function notifications(){
+    public function notifications() {
         return $this->hasMany(Notification::class);
     }
-    public function reminders(){
+    public function reminders() {
         return $this->hasMany(ReminderZoomMeeting::class);
     }
-    
 }

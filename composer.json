@@ -11,8 +11,10 @@
     "require": {
         "php": "^8.2",
         "laravel/framework": "^11.31",
+        "laravel/reverb": "^1.5",
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.9",
+        "pusher/pusher-php-server": "^7.2",
         "socialiteproviders/discord": "^4.2"
     },
     "require-dev": {

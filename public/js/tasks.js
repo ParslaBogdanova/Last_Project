@@ -23,5 +23,4 @@ function checkingTasks(checkbox, taskId) {
             completed
         })
     });
-    
 }

@@ -53,6 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
 });
 
+//-----------------------------------------------------------------
+
 function sendMessage() {
     const messageInput = document.getElementById("messageInput");
     const fileInput = document.getElementById("fileInput");
@@ -64,7 +66,7 @@ function sendMessage() {
 
 
     if (!messageContent && files.length === 0) {
-        console.log("No message or file to send");
+        console.log("No message to send");
         return;
     }
 
@@ -122,7 +124,6 @@ function sendMessage() {
                 
                 tempMessage.querySelector(".message").appendChild(fileContainer);
             }
-    
             scrollToBottom();
         }
         setTimeout(() => {
@@ -173,6 +174,8 @@ document.addEventListener('click', function(e) {
     });
 });
 
+//----------------------EDIT MESSAGE------------------------------------
+
 function editMessage(messageId) {
     const messageContainer = document.getElementById(`message-${messageId}`);
     const messageContent = messageContainer.querySelector('.message-content').textContent;
@@ -186,6 +189,8 @@ function editMessage(messageId) {
         saveEditedMessage(messageId);
     };
 }
+
+//------------------------UPDATE MESSAGE----------------------------------
 
 function saveEditedMessage(messageId) {
     const messageContainer = document.getElementById(`message-${messageId}`);
@@ -213,6 +218,8 @@ function saveEditedMessage(messageId) {
     })
     .catch(error => console.error('Error saving edited message:', error));
 }
+
+//-------------------------DELETE MESSAGE---------------------------------
 
 function deleteMessage(messageId) {
     fetch(`/messages/${messageId}`, {

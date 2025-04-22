@@ -15,18 +15,15 @@ class Message extends Model
         'receiver_id',
     ];
 
-    public function sender()
-    {
+    public function sender() {
         return $this->belongsTo(User::class, 'sender_id');
     }
 
-    public function receiver()
-    {
+    public function receiver() {
         return $this->belongsTo(User::class, 'receiver_id');
     }
 
-    public function files(){
+    public function files() {
         return $this->hasMany(MessageFile::class);
     }
-
 }

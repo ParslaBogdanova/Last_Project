@@ -32,6 +32,11 @@
                         {{ __('Messages') }}
                     </x-nav-link>
                 </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('zoom-meeting.index')" :active="request()->routeIs('zoom-meeting.*')">
+                        {{ __('Zoom Meeting Testing') }}
+                    </x-nav-link>
+                </div>
             </div>
 
             <!-- Settings Dropdown -->

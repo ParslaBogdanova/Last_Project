@@ -3,26 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\ZoomMeeting;
+use App\Models\ZoomCall;
 use App\Models\BlockedDays;
 use App\Models\Notification;
 use App\Models\ReminderZoomMeeting;
 use App\Models\User;
 use App\Models\Day;
+
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class ZoomMeetingController extends Controller
-{
+class ZoomMeetingController extends Controller {
 
-    public function create($month, $year, $date)
-    {
+    public function create($month, $year, $date) {
         $day = Day::firstOrFail($date);
-
-
-        if ($day->calendar->user_id !== Auth::id() || $day->calendar->month != $month || $day->calendar->year != $year){
-            abort(403, 'Unauthorized action.');
-        }
         $users = User::where('id', '!=', Auth::id())->get();
 
         return view('zoom_meetings.create', [
@@ -33,17 +28,14 @@ class ZoomMeetingController extends Controller
         ]);
     }
 
-    public function store(Request $request, $month, $year, $date)
-    { 
+
+
+    public function store(Request $request, $month, $year, $date) { 
         $day = Day::where('date', $date)
         ->whereHas('calendar', function ($query) {
             $query->where('user_id', Auth::id());
         })
         ->firstOrFail();
-    
-        if ($day->calendar->user_id !== Auth::id() || $day->calendar->month != $month || $day->calendar->year != $year) {
-            abort(403, 'Unauthorized action.');
-        }
     
         $validatedData = $request->validate([
             'title_zoom' => 'required|string',
@@ -67,7 +59,6 @@ class ZoomMeetingController extends Controller
                 ->with('unavailable_users', $unavailableUsers);
         }
         
-    
         $zoomMeeting = ZoomMeeting::create([
             'title_zoom' => $validatedData['title_zoom'],
             'topic_zoom' => $validatedData['topic_zoom'],
@@ -77,12 +68,20 @@ class ZoomMeetingController extends Controller
             'date'=> $date,
         ]);
 
-    
         $zoomMeeting->invitedUsers()->attach($validatedData['invited_users'], [
             'date'=>$date,
         ]);
 
+        foreach ($validatedData['invited_users'] as $userId) {
+            ZoomCall::create([
+                'zoom_meetings_id' => $zoomMeeting->id,
+                'user_id' => $userId,
+                'status' => 'active',
+            ]);
+        }
+
         $this->scheduleReminders($zoomMeeting, $validatedData['invited_users']);
+        $this->ZoomCallData($zoomMeeting, $validatedData['invited_users']);
     
         $message = "You have been invited to a Zoom meeting: {$zoomMeeting->title_zoom}";
         $this->sendZoomMeetingNotification($zoomMeeting, $validatedData['invited_users'], $message);
@@ -179,112 +178,114 @@ class ZoomMeetingController extends Controller
     }
 
 
-public function destroy($month, $year, $date, $zoomMeeting_id)
-{
-    $zoomMeeting = ZoomMeeting::find($zoomMeeting_id);
+    public function destroy($month, $year, $date, $zoomMeeting_id) {
+        $zoomMeeting = ZoomMeeting::find($zoomMeeting_id);
 
-    try {
+        try {
+            $invitedUsers = $zoomMeeting->invitedUsers()->pluck('users.id')->toArray();
+            $zoomMeeting->invitedUsers()->detach();
+            $zoomMeeting->delete();
 
-        $invitedUsers = $zoomMeeting->invitedUsers()->pluck('users.id')->toArray();
+            return response()->json(['message' => 'Zoom Meeting deleted successfully.']);
 
-        $zoomMeeting->invitedUsers()->detach();
-        $zoomMeeting->delete();
-
-        return response()->json(['message' => 'Zoom Meeting deleted successfully.'], 200);
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
-    }
-}
-
-
-private function sendZoomMeetingNotification($zoomMeeting, $userIds, $message)
-{
-    \Log::info('Sending Zoom Meeting Cancellation Notifications', [
-        'zoomMeeting' => $zoomMeeting->id,
-        'userIds' => $userIds,
-        'message' => $message,
-    ]);
-
-    foreach ($userIds as $userId) {
-        if ($userId !== $zoomMeeting->creator_id) {
-            \Log::info('Sending notification', ['user_id' => $userId, 'zoom_meeting_id' => $zoomMeeting->id]);
-
-            Notification::create([
-                'user_id' => $userId,
-                'zoom_meetings_id' => $zoomMeeting->id,
-                'message' => $message,
-            ]);
-        }
-        
-    }
-}
-
-
-public function checkUserAvailability($invitedUsers, $date, $start_time, $end_time, $zoom_meeting_id = null)
-{
-    $unavailableUsers = [];
-
-    foreach ($invitedUsers as $userId) {
-        $user = User::find($userId);
-        $blockedDay = BlockedDays::where('user_id', $userId)
-                                 ->where('date', $date)
-                                 ->first();
-
-        if ($blockedDay) {
-            $unavailableUsers[] = [
-                'name' => $user->name,
-                'reason' => "is unavailable due to: {$blockedDay->reason}. Please choose a different date.",
-            ];
-            continue;
-        }
-
-        $conflictingMeeting = ZoomMeeting::whereHas('invitedUsers', function ($query) use ($userId) {
-            $query->where('users.id', $userId);
-        })
-        ->where('date', $date)
-        ->where(function ($query) use ($start_time, $end_time) {
-            $query->whereBetween('start_time', [$start_time, $end_time])
-                  ->orWhereBetween('end_time', [$start_time, $end_time])
-                  ->orWhere(function ($query) use ($start_time, $end_time) {
-                      $query->where('start_time', '<', $start_time)
-                            ->where('end_time', '>', $end_time);
-                  });
-
-            $query->orWhere(function ($query) use ($start_time, $end_time) {
-                $query->where('start_time', '>', $end_time)
-                      ->where('end_time', '<', $start_time);
-            });
-        })
-        ->where('id', '<>', $zoom_meeting_id)
-        ->first();
-
-        if ($conflictingMeeting) {
-            $unavailableUsers[] = [
-                'name' => $user->name,
-                'reason' => "is unavailable due to another Zoom meeting from {$conflictingMeeting->start_time} till {$conflictingMeeting->end_time}. Please select a different date or time.",
-            ];
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()]);
         }
     }
 
-    return $unavailableUsers;
-}
 
-private function scheduleReminders(ZoomMeeting $zoomMeeting, array $invitedUsers)
-{
+    private function sendZoomMeetingNotification($zoomMeeting, $userIds, $message) {
+        foreach ($userIds as $userId) {
+            if ($userId !== $zoomMeeting->creator_id) {
+                Notification::create([
+                    'user_id' => $userId,
+                    'zoom_meetings_id' => $zoomMeeting->id,
+                    'message' => $message,
+                ]);
+            }
+            
+        }
+    }
 
-    $reminderTime = Carbon::parse($zoomMeeting->start_time)->subMinutes(5);
-    ReminderZoomMeeting::create([
-        'user_id' => $zoomMeeting->creator_id,
-        'zoom_meetings_id' => $zoomMeeting->id,
-        'seen' => false,
-    ]);
 
-    foreach ($invitedUsers as $userId) {
+    public function checkUserAvailability($invitedUsers, $date, $start_time, $end_time, $zoom_meeting_id = null) {
+        $unavailableUsers = [];
+
+        foreach ($invitedUsers as $userId) {
+            $user = User::find($userId);
+            $blockedDay = BlockedDays::where('user_id', $userId)
+                                    ->where('date', $date)
+                                    ->first();
+
+            if ($blockedDay) {
+                $unavailableUsers[] = [
+                    'name' => $user->name,
+                    'reason' => "is unavailable due to: {$blockedDay->reason}. Please choose a different date.",
+                ];
+                continue;
+            }
+
+            $conflictingMeeting = ZoomMeeting::whereHas('invitedUsers', function ($query) use ($userId) {
+                $query->where('users.id', $userId);
+            })
+            ->where('date', $date)
+            ->where(function ($query) use ($start_time, $end_time) {
+                $query->whereBetween('start_time', [$start_time, $end_time])
+                    ->orWhereBetween('end_time', [$start_time, $end_time])
+                    ->orWhere(function ($query) use ($start_time, $end_time) {
+                        $query->where('start_time', '<', $start_time)
+                                ->where('end_time', '>', $end_time);
+                    });
+
+                $query->orWhere(function ($query) use ($start_time, $end_time) {
+                    $query->where('start_time', '>', $end_time)
+                        ->where('end_time', '<', $start_time);
+                });
+            })
+            ->where('id', '<>', $zoom_meeting_id)
+            ->first();
+
+            if ($conflictingMeeting) {
+                $unavailableUsers[] = [
+                    'name' => $user->name,
+                    'reason' => "is unavailable due to another Zoom meeting from {$conflictingMeeting->start_time} till {$conflictingMeeting->end_time}. Please select a different date or time.",
+                ];
+            }
+        }
+
+        return $unavailableUsers;
+    }
+
+
+
+    private function scheduleReminders(ZoomMeeting $zoomMeeting, array $invitedUsers) {
+
         ReminderZoomMeeting::create([
-            'user_id' => $userId,
+            'user_id' => $zoomMeeting->creator_id,
             'zoom_meetings_id' => $zoomMeeting->id,
             'seen' => false,
         ]);
+
+        foreach ($invitedUsers as $userId) {
+            ReminderZoomMeeting::create([
+                'user_id' => $userId,
+                'zoom_meetings_id' => $zoomMeeting->id,
+                'seen' => false,
+            ]);
+        }
     }
-}
+
+    public function ZoomCallData(ZoomMeeting $zoomMeeting, array $invitedUsers) {
+        ZoomCall::updateOrCreate(
+            ['user_id' => $zoomMeeting->creator_id, 'zoom_meetings_id' => $zoomMeeting->id],
+            ['status' => 'active']
+        );
+
+        foreach ($invitedUsers as $userId) {
+            ZoomCall::updateOrCreate(
+                ['user_id' => $userId, 'zoom_meetings_id' => $zoomMeeting->id],
+                ['status' => 'active']
+            );
+        }
+    }
 }

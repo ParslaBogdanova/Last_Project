@@ -12,55 +12,86 @@
                     <div class="notifications">
                         <ul>
                             @foreach ($notifications as $notification)
-                                <li>
-                                    {{ $notification->message }}
-                                    @if ($notification->zoomMeeting)
-                                        (Created by: {{ $notification->zoomMeeting->creator->name }})
-                                    @endif
-                                    ({{ $notification->created_at->diffForHumans() }})
-                                </li>
+                                @php
+                                    $currentTime = \Carbon\Carbon::now('Europe/Riga');
+                                    $meetingDate = \Carbon\Carbon::parse(
+                                        $notification->zoomMeeting->date,
+                                        'Europe/Riga',
+                                    );
+
+                                    $startTime = \Carbon\Carbon::createFromFormat(
+                                        'H:i',
+                                        $notification->zoomMeeting->start_time,
+                                        'Europe/Riga',
+                                    )->setDate($meetingDate->year, $meetingDate->month, $meetingDate->day);
+
+                                    $endTime = \Carbon\Carbon::createFromFormat(
+                                        'H:i',
+                                        $notification->zoomMeeting->end_time,
+                                        'Europe/Riga',
+                                    )->setDate($meetingDate->year, $meetingDate->month, $meetingDate->day);
+
+                                    $isToday = $meetingDate->isSameDay($currentTime);
+                                @endphp
+                                @if ($meetingDate->greaterThanOrEqualTo($currentTime->copy()->startOfDay()) && $currentTime->lt($startTime))
+                                    <li>
+                                        {{ $notification->message }}
+                                        @if ($notification->zoomMeeting)
+                                            (Created by: {{ $notification->zoomMeeting->creator->name }})
+                                        @endif
+                                        ({{ $notification->created_at->diffForHumans() }})
+                                    </li>
+                                @endif
                             @endforeach
                         </ul>
                     </div>
                 @else
                     <p>No notifications yet.</p>
                 @endif
-
             </div>
             <div class="unread-messages">
                 @foreach ($reminders as $reminder)
                     @php
                         $currentTime = \Carbon\Carbon::now('Europe/Riga');
+                        $meetingDate = \Carbon\Carbon::parse($reminder->zoomMeeting->date, 'Europe/Riga');
 
                         $startTime = \Carbon\Carbon::createFromFormat(
                             'H:i',
                             $reminder->zoomMeeting->start_time,
                             'Europe/Riga',
-                        );
+                        )->setDate($meetingDate->year, $meetingDate->month, $meetingDate->day);
 
-                        $startTime->setDate($currentTime->year, $currentTime->month, $currentTime->day);
+                        $endTime = \Carbon\Carbon::createFromFormat(
+                            'H:i',
+                            $reminder->zoomMeeting->end_time,
+                            'Europe/Riga',
+                        )->setDate($meetingDate->year, $meetingDate->month, $meetingDate->day);
+
+                        $isToday = $meetingDate->isSameDay($currentTime);
                         $timeUntilMeeting = $currentTime->diff($startTime);
                         $hoursLeft = $timeUntilMeeting->h;
                         $minutesLeft = $timeUntilMeeting->i;
                         $secondsLeft = $timeUntilMeeting->s;
                     @endphp
 
-                    @if ($currentTime->lt($startTime))
+                    @if ($isToday && $currentTime->lt($endTime))
                         <li>
                             <strong>Reminder:</strong> Your Zoom meeting
                             <b>{{ $reminder->zoomMeeting->title_zoom }}</b> starts at
-                            <b>{{ $startTime->format('H:i') }}</b>!
+                            <b>{{ $startTime->format('H:i') }}</b>, ends at
+                            <b>{{ $endTime->format('H:i') }}</b>!
 
                             (Created by: {{ $reminder->zoomMeeting->creator->name }})
                             <div>
-                                Countdown: {{ $hoursLeft }} hours, {{ $minutesLeft }} minutes, and
-                                {{ $secondsLeft }} seconds left.
+                                Countdown:
+                                {{ $hoursLeft }} hours,
+                                {{ $minutesLeft }} minutes,
+                                and {{ $secondsLeft }} seconds left.
                             </div>
                         </li>
                     @endif
                 @endforeach
             </div>
-
             <div class="task-info">
                 <h1>Task List</h1>
                 <div class="task-list" id="task-list">
@@ -107,7 +138,5 @@
                 </div>
             @endforeach
         </div>
-
     </main>
-
 </x-app-layout>

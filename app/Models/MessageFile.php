@@ -15,7 +15,7 @@ class MessageFile extends Model
         'file_title',
     ];
 
-    public function messages(){
+    public function messages() {
         return $this->belongsTo(Message::class);
     }
 }

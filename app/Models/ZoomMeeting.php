@@ -21,20 +21,24 @@ class ZoomMeeting extends Model
         'date',
     ];
 
-    public function day(){
+    public function day() {
         return $this->belongsTo(Day::class);
     }
-    public function invitedUsers()
-    {
+
+    public function invitedUsers() {
         return $this->belongsToMany(User::class, 'user_zoom_meetings', 'zoom_meetings_id', 'user_id')
         ->withPivot('date', 'status');
     }
     
-    public function creator(){
+    public function creator() {
         return $this->belongsTo(User::class, 'creator_id');
     }
 
-    public function notifications(){
+    public function notifications() {
         return $this->hasMany(Notification::class, 'zoom_meetings_id');
+    }
+
+    public function zoomCall() {
+        return $this->hasMany(ZoomMeeting::class);
     }
 }

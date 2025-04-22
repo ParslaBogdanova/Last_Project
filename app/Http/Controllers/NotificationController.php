@@ -10,10 +10,8 @@ use Carbon\Carbon;
 use App\Models\ReminderZoomMeeting;
 use App\Models\ZoomMeeting;
 
-class NotificationController extends Controller
-{
-    public function sendNotification($zoomMeetingId, $userIds, $message)
-    {
+class NotificationController extends Controller {
+    public function sendNotification($zoomMeetingId, $userIds, $message) {
         $zoomMeeting = ZoomMeeting::findOrFail($zoomMeetingId);
     
         foreach ($userIds as $userId) {
@@ -25,8 +23,9 @@ class NotificationController extends Controller
         }
     }
 
-    public function index()
-    {
+
+
+    public function index() {
         $userId = Auth::id();
         
         $notifications = Notification::where('user_id', Auth::id())
@@ -39,9 +38,8 @@ class NotificationController extends Controller
 
 
         return view('tasks.index',[
-            'notifications'->$notifications,
-            'reminders'->$reminders
+            'notifications' => $notifications,
+            'reminders' => $reminders,
         ]);
     }
-
 }

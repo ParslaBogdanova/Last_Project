@@ -90,7 +90,7 @@
                 <input type="file" id="fileInput" name="file" accept=".jpg,.jpeg,.png,.pdf,.docx,.txt"
                     style="display: none;" multiple />
                 <input type="text" id="messageInput" placeholder="Type a message...">
-                <label for="fileInput" class="file-label">📎</label>
+                <label for="fileInput" class="file-label" style="color:white">File opener</label>
                 <button onclick="sendMessage()" id="sendButton">Send</button>
             </div>
         </div>

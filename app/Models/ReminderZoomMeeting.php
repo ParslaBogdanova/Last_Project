@@ -15,10 +15,11 @@ class ReminderZoomMeeting extends Model
         'seen',
     ];
 
-    public function zoomMeeting(){
+    public function zoomMeeting() {
         return $this->belongsTo(ZoomMeeting::class, 'zoom_meetings_id');
     }
-    public function user(){
+
+    public function user() {
         return $this->belongsTo(User::class);
     }
 }
