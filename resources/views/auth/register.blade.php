@@ -8,6 +8,7 @@
             align-items: center;
             font-size: 40px;
             font-family: Sans-Serif;
+            color: #C6AC8F;
         }
 
         .form-group {
@@ -18,7 +19,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             width: 100%;
             padding: 10px;
-            border: 2px solid #A50028;
+            border: 2px solid #D5BDAF;
             border-radius: 30px;
         }
 
@@ -27,7 +28,7 @@
             width: 90%;
             margin-left: 5%;
             padding: 10px;
-            border: 2px solid #A50028;
+            border: 2px solid #D5BDAF;
             border-radius: 30px;
             background-color: white;
         }
@@ -38,7 +39,7 @@
         }
 
         .button {
-            background-color: #A50028;
+            background-color: #D5BDAF;
             display: flex;
             font-size: 14px;
             justify-content: center;
@@ -54,18 +55,18 @@
         }
 
         .button:hover {
-            background-color: #c91440;
+            background-color: #E3D5CA;
         }
 
         .link {
-            color: #A50028;
+            color: #D5BDAF;
             text-decoration: none;
             margin-top: 16px;
         }
 
         .link:hover {
             text-decoration: underline;
-            color: #c91440;
+            color: #E3D5CA;
         }
 
         .name-group {

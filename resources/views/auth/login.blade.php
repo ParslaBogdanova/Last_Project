@@ -7,6 +7,7 @@
             align-items: center;
             font-size: 40px;
             font-family: Sans-Serif;
+            color: #C6AC8F;
         }
 
         .form-group {
@@ -17,7 +18,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             width: 90%;
             padding: 10px;
-            border: 2px solid #A50028;
+            border: 2px solid #D5BDAF;
             border-radius: 30px;
             margin-left: 5%;
             background-color: white;
@@ -29,7 +30,7 @@
         }
 
         .button {
-            background-color: #A50028;
+            background-color: #D5BDAF;
             color: white;
             padding: 10px 20px;
             border-radius: 30px;
@@ -42,14 +43,14 @@
         }
 
         .button:hover {
-            background-color: #c91440;
+            background-color: #E3D5CA;
         }
 
         .link {
             display: flex;
             justify-content: right;
             align-items: center;
-            color: #A50028;
+            color: #D5BDAF;
             margin-top: 16px;
             justify-content: right;
         }
