@@ -13,7 +13,7 @@
 
     <style>
         body {
-            background-color: #322E38;
+            background-color: #fcf8f2;
             font-family: Sans-Serif;
             display: flex;
             flex-direction: column;
