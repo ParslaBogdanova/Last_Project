@@ -6,8 +6,8 @@
     </head>
     <main class="main-content">
         <div class="card-container">
-            <div class="info-card">
-                <h1>Notification</h1>
+            <div class="notifications-container">
+                <h1>Notifications of the zoom meetings</h1>
                 @if ($notifications->count() > 0)
                     <div class="notifications">
                         <ul>
@@ -49,7 +49,8 @@
                     <p>No notifications yet.</p>
                 @endif
             </div>
-            <div class="unread-messages">
+            <div class="reminders-container">
+                <h1>Reminders till zoom meetings starts</h1>
                 @foreach ($reminders as $reminder)
                     @php
                         $currentTime = \Carbon\Carbon::now('Europe/Riga');
@@ -92,7 +93,7 @@
                     @endif
                 @endforeach
             </div>
-            <div class="task-info">
+            <div class="tasks-container">
                 <h1>Task List</h1>
                 <div class="task-list" id="task-list">
                     @foreach ($tasks as $task)
