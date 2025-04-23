@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Schedule;
 use App\Models\Notification;
 use App\Models\ReminderZoomMeeting;
 use App\Models\Day;
+use App\Models\User;
+use App\Models\ZoomMeeting;
+use App\Models\BlockedDays;
 use App\Models\Task;
 
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +20,7 @@ class TaskController extends Controller {
         $weekStart = Carbon::now()->startOfWeek();
         $weekEnd = Carbon::now()->endOfWeek();
         $userId = Auth::id(); 
+        $zoomMeetings = ZoomMeeting::all();
 
         $notifications = Notification::where('user_id', Auth::id())->latest()->get();
         $reminders = ReminderZoomMeeting::where('user_id', $userId)->with('zoomMeeting')->get();
@@ -39,6 +42,7 @@ class TaskController extends Controller {
             'weekDays' => $weekDays,
             'notifications' => $notifications,
             'reminders' => $reminders,
+            'zoomMeetings' => $zoomMeetings,
         ]);
     }
     
