@@ -17,23 +17,27 @@
 </head>
 
 <body class="font-sans antialiased">
-    <div class="min-h-screen" style="background-color: #fcf8f2;">
-        @include('layouts.navigation')
+    <div class="min-h-screen flex" style="background: linear-gradient(to top, #e8e7e6, #fcf8f2);">
+        @include('layouts.navigation') <!-- Sidebar -->
 
-        <!-- Page Heading -->
-        @isset($header)
-            <header class="bg-white dark:bg-gray-800 shadow">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    {{ $header }}
-                </div>
-            </header>
-        @endisset
+        <!-- Main content beside the sidebar -->
+        <div class="flex-1 flex flex-col">
+            <!-- Page Heading -->
+            @isset($header)
+                <header class="bg-white dark:bg-gray-800 shadow">
+                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                        {{ $header }}
+                    </div>
+                </header>
+            @endisset
 
-        <!-- Page Content -->
-        <main>
-            {{ $slot }}
-        </main>
+            <!-- Page Content -->
+            <main class="flex-1">
+                {{ $slot }}
+            </main>
+        </div>
     </div>
 </body>
+
 
 </html>

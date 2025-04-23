@@ -57,25 +57,36 @@
                             @endforeach
 
                         </div>
-                        <div class="zoomMeetings">
-                            @foreach ($zoomMeetings as $zoomMeeting)
-                                @php
-                                    $zoomMeetingDate = \Carbon\Carbon::parse($zoomMeeting->date);
-                                @endphp
+                        <div class="schedule-container">
+                            @foreach ($weekDays as $day)
+                                <div class="calendar-day {{ $day['date']->isToday() ? 'today' : '' }}">
+                                    <span class="day-name">{{ $day['name'] }}</span>
+                                    <span class="day-number">{{ $day['formattedDate'] }}</span>
+                                    <div class="zoomMeetings">
+                                        @foreach ($zoomMeetings as $zoomMeeting)
+                                            @php
+                                                $zoomMeetingDate = \Carbon\Carbon::parse($zoomMeeting->date)->format(
+                                                    'Y-m-d',
+                                                );
+                                            @endphp
 
-                                @if ($day->date == $zoomMeetingDate->toDateString())
-                                    @if ($zoomMeeting->creator_id === Auth::id())
-                                        <div class="zoomMeeting-item" style="background-color:#99d0d1;">
-                                            {{ $zoomMeeting->title_zoom }}
-                                        </div>
-                                    @elseif($zoomMeeting->invitedUsers->pluck('id')->contains(Auth::id()))
-                                        <div class="zoomMeeting-item" style="background-color:orange;">
-                                            {{ $zoomMeeting->title_zoom }}
-                                        </div>
-                                    @endif
-                                @endif
+                                            @if ($day['date']->format('Y-m-d') === $zoomMeetingDate)
+                                                @if ($zoomMeeting->creator_id === Auth::id())
+                                                    <div class="zoomMeeting-item" style="background-color:#99d0d1;">
+                                                        {{ $zoomMeeting->title_zoom }}
+                                                    </div>
+                                                @elseif ($zoomMeeting->invitedUsers->pluck('id')->contains(Auth::id()))
+                                                    <div class="zoomMeeting-item" style="background-color:orange;">
+                                                        {{ $zoomMeeting->title_zoom }}
+                                                    </div>
+                                                @endif
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                </div>
                             @endforeach
                         </div>
+
                     </div>
                 </a>
             @endforeach

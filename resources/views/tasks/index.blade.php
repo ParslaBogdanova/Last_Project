@@ -7,7 +7,7 @@
     <main class="main-content">
         <div class="card-container">
             <div class="notifications-container">
-                <h1>Notifications of the zoom meetings</h1>
+                <h1 class= "notifications-title">Notifications of the zoom meetings</h1>
                 @if ($notifications->count() > 0)
                     <div class="notifications">
                         <ul>
@@ -50,7 +50,7 @@
                 @endif
             </div>
             <div class="reminders-container">
-                <h1>Reminders till zoom meetings starts</h1>
+                <h1 class ="reminders-title">Reminders till zoom meetings starts</h1>
                 @foreach ($reminders as $reminder)
                     @php
                         $currentTime = \Carbon\Carbon::now('Europe/Riga');
@@ -94,19 +94,21 @@
                 @endforeach
             </div>
             <div class="tasks-container">
-                <h1>Task List</h1>
+                <h1 class="tasks-title">Task List</h1>
                 <div class="task-list" id="task-list">
                     @foreach ($tasks as $task)
                         <div class="task-item" data-task-id="{{ $task->id }}">
+                            <div class="task-main {{ $task->completed ? 'completed' : '' }}"
+                                data-task-id="{{ $task->id }}">
+                                <input type="checkbox" class="rounded checkbox"
+                                    onchange="checkingTasks(this, {{ $task->id }})"
+                                    @if ($task->completed) checked @endif>
 
-                            <input type="checkbox" class="rounded checkbox"
-                                onchange="checkingTasks(this, {{ $task->id }})"
-                                @if ($task->completed) checked @endif>
+                                <a href="{{ route('tasks.show', $task->id) }}">
+                                    {{ $task->description }}
+                                </a>
+                            </div>
 
-                            <a href="{{ route('tasks.show', $task->id) }}"
-                                class="{{ $task->completed ? 'completed' : '' }}">
-                                {{ $task->description }}
-                            </a>
                             <form action="{{ route('tasks.destroy', $task->id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
@@ -120,9 +122,10 @@
                 <form id="create-task-form" class="task-form hidden" action="{{ route('tasks.store') }}"
                     method="POST">
                     @csrf
-                    <label for="description">Description:</label>
-                    <input type="text" id="description" name="description" placeholder="Description" required>
-                    <button type="submit">Save Task</button>
+                    <div class="description-div">
+                        <input type="text" id="description" name="description" placeholder="Description" required>
+                        <button type="submit">Save task</button>
+                    </div>
                 </form>
 
                 <a id="create-task-button" class="create-task">
@@ -136,8 +139,32 @@
                 <div class="calendar-day {{ $day['date']->isToday() ? 'today' : '' }}">
                     <span class="day-name">{{ $day['name'] }}</span>
                     <span class="day-number">{{ $day['formattedDate'] }}</span>
+                    <div class="zoomMeetings">
+                        @foreach ($zoomMeetings as $zoomMeeting)
+                            @php
+                                $zoomMeetingDate = \Carbon\Carbon::parse($zoomMeeting->date)->format('Y-m-d');
+                                $calendarDayDate = \Carbon\Carbon::parse($day['date'])->format('Y-m-d');
+                            @endphp
+
+                            @if ($calendarDayDate === $zoomMeetingDate)
+                                @if ($zoomMeeting->creator_id === Auth::id())
+                                    <div class="zoomMeeting-item" style="background-color:#99d0d1; color: #58898a;">
+                                        Title: {{ $zoomMeeting->title_zoom }} <br>
+                                        Topic: {{ $zoomMeeting->topic_zoom }}
+                                    </div>
+                                @elseif ($zoomMeeting->invitedUsers->pluck('id')->contains(Auth::id()))
+                                    <div class="zoomMeeting-item" style="background-color:#ffa500; color: #9c6502;">
+                                        Title: {{ $zoomMeeting->title_zoom }} <br>
+                                        Topic: {{ $zoomMeeting->topic_zoom }} <br>
+                                        Created by: {{ $zoomMeeting->creator->name }}
+                                    </div>
+                                @endif
+                            @endif
+                        @endforeach
+                    </div>
                 </div>
             @endforeach
         </div>
+
     </main>
 </x-app-layout>
