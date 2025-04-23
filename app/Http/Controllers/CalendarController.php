@@ -49,7 +49,6 @@ class CalendarController extends Controller {
             'month' => $month,
             'zoomMeetings' => $zoomMeetings, 
         ]);
-        
     }
     
 
