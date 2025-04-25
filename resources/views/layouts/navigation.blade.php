@@ -60,10 +60,10 @@
         </div>
 
         <!-- Responsive Navigation Menu -->
-        <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
+        <div class="pt-4 pb-1 border-t">
             <div class="space-y-1">
             </div>
-            <div class="mt-3 space-y-1" style="font-family: 'Cookie', cursive;">
+            <div s style="font-family: 'Cookie', cursive;">
                 <x-responsive-nav-link :href="route('profile.edit')">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
