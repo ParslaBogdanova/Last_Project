@@ -101,6 +101,15 @@ function deleteZoomMeeting(event, zoomMeetingId) {
     })
 }
 
+//---------------------------------------------------------------------------------
+
+function closeBlockedDays() {
+    document.getElementById('blockForm').style.display = 'none';
+}
+
+function closeZoomForm() {
+    document.getElementById('zoomForm').style.display = 'none';
+}
 
 
 

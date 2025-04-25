@@ -32,9 +32,19 @@
 
 .notifications-container {
     background-color: #F5EBE0;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none; 
 }
 .reminders-container {
     background-color: #EDEDE9;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none; 
 }
 .tasks-container {
     background-color: #E3D5CA;

@@ -1,99 +1,164 @@
-/* ---------------- CONTAINER LAYOUT ---------------- */
 .container {
     display: flex;
-    justify-content: space-between;
-    padding: 2rem;
-    gap: 20px;
-}
-
-/* ---------------- FORM CONTAINER ---------------- */
-.form-container {
-    width: 48%;
-    background-color: #f9f9f9;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.form-container h2 {
-    font-size: 20px;
-    margin-bottom: 1rem;
-}
-
-.form-container label {
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-    display: block;
-}
-
-.form-container input,
-.form-container textarea {
+    gap: 1rem;
+    justify-content: space-evenly;
     width: 100%;
-    padding: 0.5rem;
+}
+
+/*---------------------SCHEDULE CONTAINER CREATION---------------------*/
+.creation-container label{
+    color: #a19382;
+    font-family: 'Cookie', cursive;
+    font-weight: bold;
+}
+
+.creation-container input,
+.creation-container textarea{
+    color: #c5c4c2;
+    border-radius: 4px;
+    text-decoration: none;
+    text-align: center;
+    font-family:'Cookie', cursive;
+    border: 1px solid #5E503F;
     margin-bottom: 1rem;
-    border-radius: 5px;
-    border: 1px solid #ddd;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.form-container input[type="color"] {
-    padding: 0;
-    width: auto;
-}
-
-/* ---------------- BUTTON STYLES ---------------- */
-.form-container button,
-.back-to-calendar-btn {
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
+.creation-container button{
+    color: #5E503F;
+    font-family:'Cookie', cursive;
     cursor: pointer;
 }
 
-.form-container button {
-    background-color: #28a745;
+.creation-container button:hover{
+    color:#928177;
 }
-
-.form-container button:hover {
-    background-color: #218838;
-}
-
-.back-to-calendar-btn {
-    background-color: #2ecc71;
-    font-size: 14px;
+.unable-invited-users h2,
+.schedule-list-container h2,
+.zoomMeeting-list-container h2,
+.creation-container h2 {
+    font-size:medium;
+    font-weight: bold;
+    margin-bottom: 1rem;
     text-align: center;
-    display: inline-block;
-    margin-left: 10px;
+    color: #5E503F;
 }
 
-.back-to-calendar-btn:hover {
-    background-color: #27ae60;
-}
-
-/* ---------------- SCHEDULE LIST CONTAINER ---------------- */
-.schedule-list-container {
-    width: 48%;
-    background-color: #f9f9f9;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/*---------------------CONTAINERS---------------------*/
+.error-container,
+.schedules-creation-container,
+.zoomMeetings-container,
+.schedules-container {
+    flex: 1;
+    min-width: 0;
+    height: 750px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    border-radius: 8px;
+    border: 1px solid #d3c1b0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    box-sizing: border-box;
 }
 
-/* ---------------- SCHEDULE & ZOOM_MEETING ITEM ---------------- */
+.schedules-creation-container {
+    max-height: 100%;
+}
+
+.error-message-list,
+.zoomMeeting-list {
+    margin-top: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 600px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.schedule-list {
+    margin-top: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 620px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+/*---------------------UNINVITED USERS---------------------*/
+
+.unable-invited-users h2{
+    color: #fc9583;
+    text-align: center;
+    font-size: 17px;
+    margin-bottom: 1rem;
+}
+
+.error-message{
+    color: #fa8c8c;
+    font-family: 'Cookie', cursive;
+}
+
+.error-container{
+    background-color: #f5e4e1;
+}
+
+/*---------------------BLOCKED DAY---------------------*/
+
+
+.blocked-reason {
+    max-height: 21em;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 15px;
+    color: #ffaa9a;
+}
+
+/* Hide scrollbar for WebKit browsers */
+.blocked-reason::-webkit-scrollbar {
+    display: none;
+}
+
+
+ .unblock-button{
+    color: #928177;
+    font-family: 'Cookie', cursive;
+ }
+ .unblock-button:hover{
+    color:#c4aea1;
+ }
+
+/*---------------------SCHEDULE & ZOOM LIST CONTAINERS---------------------*/
+
+.schedule-title{
+    text-align: center;
+}
+
+
+/*---------------------SCHEDULE & ZOOM ITEMS---------------------*/
 .schedule-item,
 .zoomMeeting-item {
     position: relative;
     padding: 8px;
+    margin-bottom: 3px;
     border-radius: 5px;
-    margin-bottom: 1rem;
     color: white;
     cursor: pointer;
+    box-shadow: 0 4px 6px #0000001a;
+    font-family:'Cookie', cursive;
 }
 
 .schedule-item .delete-schedule,
@@ -101,70 +166,21 @@
     position: absolute;
     top: 5px;
     right: 5px;
-    color: white;
     font-size: 14px;
     font-weight: bold;
+    color: white;
     cursor: pointer;
 }
 
 .schedule-item .delete-schedule:hover,
-.zoomMeeting-item .delete-zoomMeeting {
-    color: red;
+.zoomMeeting-item .delete-zoomMeeting:hover {
+    color: rgb(177, 137, 115);
 }
 
-.schedule-item .schedule-title,
-.zoomMeeting-item .zoomMeeting-topic_zoom {
-    font-weight: bold;
-}
-
-.schedule-item .schedule-description,
-.zoomMeeting-item .zoomMeeting-topic_zoom {
-    margin-top: 0.5rem;
-}
-.zoomMeeting-item .zoomMeeting-start_time{
-    margin-top: 0.5rem;
-}
-.zoomMeeting-item .zoomMeeting-end_time{
-    margin-top: 0.5rem;
-}
-.zoomMeeting-item .zoomMeeting-invited_users{
-    margin-top: 0.5rem;
-}
-
-/* ---------------- COLOR INDICATOR FOR SCHEDULE ---------------- */
-.schedule-item .schedule-color,
-.zoomMeeting-item .zoomMeeting-color{
-    margin-top: 0.5rem;
-    padding: 5px;
-    border-radius: 3px;
-    width: 40px;
-    height: 10px;
-    background-color: #ccc;
-}
-
-/* ---------------- SCHEDULE DETAILS CONTAINER ---------------- */
-.schedule-details-container {
-    width: 48%;
-    background-color: #f9f9f9;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    visibility: hidden;
-    opacity: 0; /* Initially hidden */
-    transition: visibility 0s, opacity 0.3s ease-in-out;
-}
-
-.schedule-details-container.visible {
-    visibility: visible;
-    opacity: 1; /* Fade in */
-}
-
+/*---------------------DETAILS CONTAINERS---------------------*/
+.schedule-details-container,
 .zoomMeeting-details-container {
     width: 48%;
-    background-color: #f9f9f9;
     padding: 1rem;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -172,53 +188,50 @@
     flex-direction: column;
     gap: 10px;
     visibility: hidden;
-    opacity: 0; /* Initially hidden */
+    opacity: 0;
     transition: visibility 0s, opacity 0.3s ease-in-out;
 }
 
-.zoomMeeting-details-container.visible {
-    visibility: visible;
-    opacity: 1; /* Fade in */
+.schedule-details-container {
+    background-color:#c4aea1;
+}
+.zoomMeeting-details-container {
+    background-color:#c5c4c2;
 }
 
+.schedule-details-container.visible,
+.zoomMeeting-details-container.visible {
+    visibility: visible;
+    opacity: 1;
+}
 
-
-/* ---------------- CLOSE BUTTONS ---------------- */
+/*---------------------CLOSE BUTTON---------------------*/
+.blockForm .close.btn,
+.zoomForm .close-btn,
 .schedule-details-container .close-btn,
 .zoomMeeting-details-container .close-btn {
     align-self: flex-end;
-    background-color: #ff4d4d;
-    color: white;
+    color: #5E503F;
     padding: 5px 10px;
     border-radius: 5px;
     cursor: pointer;
 }
 
-.schedule-details-container .close-btn:hover,
-.zoomMeeting-details-container .close-btn:hover {
-    background-color: #e60000;
-}
-
-/* ---------------- DROPDOWN MENU ---------------- */
+/*---------------------DROPDOWN MENU---------------------*/
 .dropdown-container {
-    margin-top: 1rem;
     position: relative;
-}
-
-.dropdown-toggle {
-    background-color: #2ecc71;
-    color: white;
-    padding: 10px 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    border: none;
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
+    color: #5E503F;
 }
 
 .dropdown-options {
     display: none;
     position: absolute;
-    top: 40px;
+    top: 100%;
     left: 0;
+    margin-top: 5px;
     background-color: #fff;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
@@ -226,59 +239,309 @@
     z-index: 10;
 }
 
+
 .dropdown-options a {
     display: block;
     padding: 10px;
     text-decoration: none;
     color: #333;
     font-size: 14px;
+    font-family:'Cookie', cursive;
 }
 
 .dropdown-options a:hover {
     background-color: #f2f2f2;
 }
 
-/* ---------------- BLOCKED DAY MESSAGE ---------------- */
-.blocked-day {
-    background-color: #e74c3c;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
+/*---------------------DATE NAVIGATOR---------------------*/
+.date-navigator {
     text-align: center;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    font-family: 'Cookie', cursive;
+    color: #D5BDAF;
 }
 
-/* ---------------- BLOCK FORM ---------------- */
-.block-form {
+.back-to-calendar-btn{
+    text-align: left;
     margin-top: 1rem;
+    margin-left: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: left;
+    align-items: left;
+    gap: 1rem;
+    font-family: 'Cookie', cursive;
+    color: #D5BDAF;
 }
 
-.block-form input,
-.block-form textarea {
-    margin-bottom: 10px;
+.back-to-calendar-btn:hover{
+    color: #c4aea1; 
 }
 
-.block-form button {
-    background-color: #e74c3c;
+/*-------------------------EDITING SCHEDULE & ZOOM MEETING-------------------------*/
+#scheduleDetailsContainer,
+#zoomMeetingDetailsContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px;
+    background-color: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    z-index: 999;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+#scheduleDetailsContainer.visible,
+#zoomMeetingDetailsContainer.visible {
+    visibility: visible;
+    opacity: 1;
+}
+
+#modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+#modalOverlay.visible {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+/*---------------------------EDIT FORM STYLING--------------------------*/
+
+.schedule-details-container,
+.zoomMeeting-details-container {
+    background-color: #FFF8F0;
+    border: 2px solid #D5BDAF;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 500px;
+    margin: 2rem auto;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    font-family: 'Cookie', cursive;
+    color: #5E503F;
+    position: relative;
+}
+
+.schedule-details-container h2,
+.zoomMeeting-details-container h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #C6AC8F;
+    font-size: 28px;
+}
+
+.schedule-details-container form div,
+.zoomMeeting-details-container form div {
+    margin-bottom: 1rem;
+}
+
+.schedule-details-container label,
+.zoomMeeting-details-container label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-size: 18px;
+    color: #5E503F;
+}
+
+.schedule-details-container input[type="text"],
+.schedule-details-container textarea,
+.schedule-details-container input[type="color"],
+.zoomMeeting-details-container input[type="text"],
+.zoomMeeting-details-container textarea,
+.zoomMeeting-details-container input[type="time"],
+.zoomMeeting-details-container select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #D5BDAF;
+    border-radius: 6px;
+    font-size: 16px;
+    font-family: 'Cookie', cursive;
+    background-color: #F0EAE2;
+    color: #5E503F;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.schedule-details-container button[type="submit"],
+.zoomMeeting-details-container button[type="submit"] {
+    background-color: #D5BDAF;
     color: white;
-    padding: 8px 16px;
+    padding: 0.5rem 1.2rem;
+    font-size: 18px;
+    font-family: 'Cookie', cursive;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: block;
+    margin: 1rem auto 0;
+    transition: background-color 0.3s ease;
+}
+
+.schedule-details-container button[type="submit"]:hover,
+.zoomMeeting-details-container button[type="submit"]:hover {
+    background-color: #c4aea1;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background-color: transparent;
+    border: none;
+    font-size: 24px;
+    color: #D5BDAF;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+    color: #b99f91;
+}
+
+/*---------------------ZOOM_FORM & BLOCKED_DAYS---------------------*/
+
+#zoomForm {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #f9f1e9;
+    border: 1px solid #d5bdaf;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    font-family: 'Cookie', cursive;
+    color: #5e503f;
+    z-index: 999;
+    width: 90%;
+    max-width: 500px;
+    display: none;
+}
+#zoomForm label {
+    display: block;
+    margin-bottom: 0.2rem;
+}
+#zoomForm input,
+#zoomForm textarea,
+#zoomForm select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #d5bdaf;
     border-radius: 5px;
+    font-family: 'Cookie', cursive;
+    margin-bottom: 1rem;
+    background-color: #f0eae2;
+    color: #5e503f;
+}
+#zoomForm button[type="submit"] {
+    background-color: #d5bdaf;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
     cursor: pointer;
 }
+#zoomForm button[type="submit"]:hover {
+    background-color: #c4aea1;
+}
 
-.block-form button:hover {
-    background-color: #c0392b;
+#zoomForm.visible {
+    display: block;
+}
+
+#modalOverlayZoom {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 998;
+    display: none;
+}
+#modalOverlayZoom.visible {
+    display: block;
 }
 
 
-/*Error message*/
-.error-container {
-    margin-top: 15px;
-    padding: 10px;
-    background-color: #ffdddd;
-    border-left: 5px solid #ff4d4d;
-    color: #b30000;
-    font-weight: bold;
-    text-align: center;
+
+
+#blockForm {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #f9f1e9;
+    border: 1px solid #d5bdaf;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    font-family: 'Cookie', cursive;
+    color: #5e503f;
+    z-index: 999;
+    width: 90%;
+    max-width: 500px;
+    display: none;
+}
+
+#blockForm textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #d5bdaf;
     border-radius: 5px;
+    font-family: 'Cookie', cursive;
+    margin-bottom: 1rem;
+    background-color: #f0eae2;
+    color: #5e503f;
+}
+#blockForm button[type="submit"] {
+    background-color: #d5bdaf;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+}
+#blockForm button[type="submit"]:hover {
+    background-color: #c4aea1;
 }
 
+#blockForm.visible {
+    display: block;
+}
+
+#modalOverlayBlockedDay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 998;
+    display: none;
+}
+#modalOverlayBlockedDay.visible {
+    display: block;
+}
