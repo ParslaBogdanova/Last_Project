@@ -13,7 +13,7 @@
 
     <style>
         body {
-            background-color: #fcf8f2;
+            background: linear-gradient(to top, #e8e7e6, #fcf8f2);
             font-family: Sans-Serif;
             display: flex;
             flex-direction: column;
