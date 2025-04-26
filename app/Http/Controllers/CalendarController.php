@@ -134,6 +134,24 @@ class CalendarController extends Controller {
                 'calendar_id' => $day->calendar_id,
             ]
         );
+
+         // 1. Meetings where user is invited
+        $invitedMeetings = ZoomMeeting::where('date', $date)
+            ->whereHas('invitedUsers', function ($query) use ($userId) {
+             $query->where('user_id', $userId);
+        })->get();
+
+        foreach ($invitedMeetings as $meeting) {
+            $meeting->invitedUsers()->detach($userId);
+        }
+
+        // 2. Meetings where user is the creator
+        $createdMeetings = ZoomMeeting::where('date', $date)
+            ->where('creator_id', $userId)->get();
+
+        foreach ($createdMeetings as $meeting) {
+            $meeting->delete();
+        }
     
         return redirect()->route('calendar.show', [
             'month' => $month,
