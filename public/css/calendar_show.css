@@ -127,7 +127,6 @@
     color: #ffaa9a;
 }
 
-/* Hide scrollbar for WebKit browsers */
 .blocked-reason::-webkit-scrollbar {
     display: none;
 }
