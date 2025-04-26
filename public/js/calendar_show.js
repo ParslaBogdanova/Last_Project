@@ -83,7 +83,7 @@ function closeZoomMeetingDetails() {
 function deleteZoomMeeting(event, zoomMeetingId) {
     event.stopPropagation();
 
-    if (!confirm("Are you sure you want to delete this Zoom Meeting?")) {
+    if (!confirm("Are you sure you want to cancel this meeting?")) {
         return;
     }
 
@@ -110,6 +110,17 @@ function closeBlockedDays() {
 function closeZoomForm() {
     document.getElementById('zoomForm').style.display = 'none';
 }
+
+document.getElementById('zoomForm').addEventListener('submit', function(event) {
+    const startTime = document.getElementById('start_time').value;
+    const endTime = document.getElementById('end_time').value;
+
+    if (startTime >= endTime) {
+        event.preventDefault();
+        alert('"End time" must be after start time and within the same day!');
+    }
+});
+
 
 
 
