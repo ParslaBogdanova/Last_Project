@@ -46,8 +46,6 @@
                 @endif
             @endif
 
-            {{-- Calendar Buttons/Forms --}}
-
             <div class="calendar-day-details">
                 @if ($day->blockedDays->where('user_id', Auth::id())->isNotEmpty())
                     <div class="blocked-reason">
@@ -96,11 +94,12 @@
                             </div>
                             <div>
                                 <label for="start_time">Start Time</label>
-                                <input type="time" id="start_time" name="start_time" required>
+                                <input type="time" id="start_time" name="start_time" min="00:00" max="23:59"
+                                    required>
                             </div>
                             <div>
                                 <label for="end_time">End Time</label>
-                                <input type="time" id="end_time" name="end_time">
+                                <input type="time" id="end_time" name="end_time" min="00:01" max="23:59">
                             </div>
                             <div>
                                 <label for="invited_users">Invited Users</label>
@@ -199,16 +198,17 @@
         <div class ="error-container">
             <div class="unable-invited-users">
                 <h2>The following users are unavailable:</h2>
-                <div class="error-message-list"></div>
-                @if (session('unavailable_users'))
-                    <div id="error-message">
-                        <ul>
-                            @foreach (session('unavailable_users') as $user)
-                                <li>{{ $user['name'] }} - {{ $user['reason'] }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
+                <div class="error-message-list">
+                    @if (session('unavailable_users'))
+                        <div id="error-message" class="error-message">
+                            <ul>
+                                @foreach (session('unavailable_users') as $user)
+                                    <li><strong>{{ $user['name'] }}</strong> - {{ $user['reason'] }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
