@@ -1,42 +1,67 @@
-/* Sidebar styles */
+/*---------------------SIDEBAR---------------------*/
 .sidebar {
     width: 250px;
-    background-color: #3D3844;
-    color: #dfe6e9;
+    background: linear-gradient(to top, #D6CCC2, #F5EBE0);
+    color: #ffffff;
     display: flex;
     flex-direction: column;
-    padding: 10px;
+    padding: 20px;
     overflow-y: auto;
-    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Cookie', cursive;
+    min-height: 100vh;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none; 
 }
 
 .sidebar h1 {
-    font-size: 1.4rem;
-    color: #fc86a1;
-    margin-bottom: 10px;
+    font-size: 20px;
+    color: #D5BDAF;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    margin-left: 5px;
 }
 
 .user-item {
-    padding: 8px 10px;
-    margin-bottom: 6px;
-    border-radius: 6px;
-    background-color: #36313D;
-    color: #dfe6e9;
+    text-align: center;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    background: #E3D5CA;
+    color: #ffffff;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    font-size: 1rem;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none; 
 }
 
-.user-item:hover {
-    background-color: #444048;
+.user-item:hover{
+    background-color: #d3c1b0;
+    color: #877569;
 }
 
-/* Writing area styles */
+.user-item.active {
+    background-color: #bbdefb;
+    color: #e3f2fd;
+}
+
+/*---------------------WRITING AREA---------------------*/
 .writing-area {
     flex: 1;
-    background-color: #2B2731;
+    min-height: 100vh;
     display: none;
     flex-direction: column;
-    padding: 10px;
+    padding: 20px;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
 }
 
 .writing-area.active {
@@ -45,14 +70,26 @@
 
 .writing-content {
     flex: 1;
-    background-color: #312C38;
-    padding: 10px;
+    padding: 12px;
     border-radius: 6px;
-    overflow-y: auto;
+    background-color: #F5EBE0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     margin-bottom: 10px;
+    color: #5e503f;
+    font-family: 'Cookie', cursive;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none; 
 }
 
+.writing-content::-webkit-scrollbar {
+    display: none;
+}
+
+/*---------------------MESSAGES---------------------*/
 .message-container {
     display: flex;
     flex-direction: column;
@@ -65,36 +102,38 @@
 }
 
 .message {
+    font-family: 'Cookie', cursive;
     padding: 12px;
+    color: #5e503f;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     max-width: 75%;
     word-wrap: break-word;
 }
 
-/* Sent and received message styles */
 .sent .message {
-    background: linear-gradient(to top, #f7f48f, #ffb657);
+    background: linear-gradient(to top, #fcf9ad, #f8c17a);
 }
 
 .received .message {
-    background: linear-gradient(to top, #e1fbfc, #b1fcfc);
+    background: linear-gradient(to top, #edfdfd, #bdf7f7);
 }
 
 .user-name {
     font-weight: bold;
-    color: white;
+    color: #a9927d;
     margin-bottom: 5px;
     font-size: 0.9rem;
 }
 
 .message-time {
-    font-size: 0.8rem;
-    color: #bbb;
+    font-size: 0.7rem;
+    color: #a9927d;
     margin-top: 3px;
+    font-family: 'Cookie', cursive;
 }
 
-/* Writing input styles */
+/*---------------------WRITING INPUT---------------------*/
 .writing-input {
     margin-top: 8px;
     display: flex;
@@ -102,81 +141,65 @@
     justify-content: space-between;
     gap: 8px;
     padding: 8px;
-    background-color: #36313D;
+    background-color: #F5EBE0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     border-radius: 6px;
-    flex-wrap: wrap; /* Allows wrapping if space is limited */
+    flex-wrap: wrap;
 }
+
 .writing-input input {
     flex: 1;
     padding: 10px;
-    border: 1px solid #444048;
+    border: 1px solid #d4d4d4;
     border-radius: 20px;
-    background-color: #2B2731;
-    color: #dfe6e9;
+    color: #5e503f;
     font-size: 0.9rem;
 }
 
 .writing-input button {
     padding: 10px 16px;
-    background-color: #fc86a1;
+    background-color: #746b61;
     color: #fff;
     border: none;
     border-radius: 20px;
     font-size: 0.9rem;
     cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
 .writing-input button:hover {
-    background-color: #e3342f;
+    background-color: #91867a;
 }
 
-/* Date header style */
 .message-date-header {
     text-align: center;
-    font-size: 0.8rem;
+    font-size: 1rem;
     font-weight: normal;
-    color: white;
+    color: #c2af9a;
+    font-family: 'Cookie', cursive;
+    font-weight: bold;
     margin: 15px 0;
     padding: 3px;
     background: none;
 }
 
-/* Scrollbar styles */
-.writing-content {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-
-.writing-content::-webkit-scrollbar {
-    display: none;
-}
-
-/* Dropdown styles */
+/*---------------------DROPDOWN---------------------*/
 .dropdown {
     position: relative;
     display: inline-block;
 }
 
 .dropdown-toggle {
-    background: none;
-    border: none;
-    color: #dfe6e9;
+    color: #5E503F;
     cursor: pointer;
     font-size: 1rem;
     padding: 5px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-.dropdown-toggle:hover {
-    background-color: #444048;
+    font-family: 'Cookie', cursive;
 }
 
 .dropdown-menu {
     display: none;
     position: absolute;
-    background-color: #444048;
+    background-color: #f2f2f2;
     border-radius: 6px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     min-width: 160px;
@@ -186,7 +209,7 @@
 
 .dropdown-menu button {
     background: none;
-    color: #dfe6e9;
+    color: #5E503F;
     border: none;
     padding: 8px 10px;
     width: 100%;
@@ -198,7 +221,7 @@
 }
 
 .dropdown-menu button:hover {
-    background-color: #e3342f;
+    background-color: #d5bdaf;
 }
 
 .dropdown.active .dropdown-menu {
@@ -210,188 +233,41 @@
     right: 0;
 }
 
-.message-container.received .dropdown-menu {
-    left: 0;
-    right: auto;
-}
+/*---------------------FILES & IMAGES---------------------*/
 
-/* File info styles */
-.file-info {
-    margin-bottom: 8px;
-    font-weight: bold;
-}
-
-
-
-.image-gallery, .message-image-gallery {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    gap: 10px;
-}
-
-.image-gallery img, .message-image-gallery img {
-    max-width: 200px;
-    height: auto;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
-
-.message-image-gallery img:hover {
-    transform: scale(1.1);
-}
-
-
-.image-gallery::-webkit-scrollbar, .message-image-gallery::-webkit-scrollbar {
-    height: 8px;
-}
-
-.image-gallery::-webkit-scrollbar-thumb, .message-image-gallery::-webkit-scrollbar-thumb {
-    background-color: #888;
-    border-radius: 4px;
-}
-
-.image-gallery::-webkit-scrollbar-track, .message-image-gallery::-webkit-scrollbar-track {
-    background-color: #f1f1f1;
-}
-
-.image-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
+.file-preview-container {
     display: none;
-    justify-content: center;
-    align-items: center;
-}
-
-
-.modal-content {
-    position: relative;
-    max-width: 90%;
-    max-height: 90%;
-}
-
-
-.close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    color: white;
-    font-size: 30px;
-    cursor: pointer;
-}
-
-#modalImage {
     width: 100%;
-    height: auto;
-}
-
-
-.file-preview-item {
-    display: inline-block;
-    max-width: 100px;
-    margin-right: 8px;
-}
-
-.preview-image {
-    max-width: 80px;
-    max-height: 80px;
-    object-fit: cover;
-    cursor: pointer;
-}
-
-.file-preview-item a {
-    display: block;
-    text-align: center;
-    color: #0066cc;
-    text-decoration: none;
-}
-
-.file-preview-item a:hover {
-    text-decoration: underline;
-}
-
-@media (max-width: 768px) {
-    .sidebar {
-        width: 200px;
-    }
-
-    .writing-input input {
-        font-size: 0.8rem;
-    }
-
-    .writing-input button {
-        font-size: 0.8rem;
-    }
-
-    .message {
-        max-width: 100%;
-        font-size: 0.85rem;
-    }
-
-    .image-gallery img, .message-image-gallery img {
-        max-width: 120px;
-    }
+    overflow-x: auto;
+    gap: 8px;
+    padding: 8px;
+    background-color: #E3D5CA;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
 }
 
 .file-preview-area {
     display: flex;
     gap: 8px;
     padding: 8px;
-    background-color: #36313D;
     border-radius: 6px;
     width: 100%;
     min-height: 50px;
+    overflow-x: auto; 
 }
 
 .file-preview {
     display: flex;
+    background:none;
     align-items: center;
     gap: 6px;
-    background-color: #444048;
     padding: 6px;
     border-radius: 6px;
     flex: 1;
     max-width: 120px;
     min-width: 80px;
     justify-content: center;
-}
-
-.file-preview img {
-    max-width: 50px;
-    max-height: 50px;
-    object-fit: cover;
-    border-radius: 4px;
-}
-
-.file-preview span {
-    font-size: 0.8rem;
-    color: #dfe6e9;
-    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 60px;
-}
-
-.file-preview .remove-file {
-    cursor: pointer;
-    color: #fc86a1;
-    font-size: 1rem;
-}
-
-.file-preview .remove-file:hover {
-    color: #e3342f;
 }
 
 
-.message .file-preview-area:empty {
-    display: none;
-}
-.file-preview-container {
-    display: none;
-    width: 100%;
-}

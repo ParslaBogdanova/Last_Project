@@ -1,45 +1,54 @@
 .sidebar {
     width: 250px;
-    background-color: #3D3844;
-    color: #dfe6e9;
+    background: linear-gradient(to top, #D6CCC2, #F5EBE0);
+    color: #ffffff;
     display: flex;
     flex-direction: column;
-    padding: 10px;
+    padding: 20px;
     overflow-y: auto;
-    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.2);
-    height: calc(100vh - 64px);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Cookie', cursive;
+    min-height: 100vh;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none; 
 }
 
 .sidebar h1 {
-    font-size: 1.4rem;
-    color: #fc86a1;
-    margin-bottom: 10px;
+    font-size: 20px;
+    color: #D5BDAF;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    margin-left: 5px;
 }
-
 
 .user-item {
-    padding: 8px 10px;
-    margin-bottom: 6px;
-    border-radius: 6px;
-    background-color: #36313D;
-    color: #dfe6e9;
+    text-align: center;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    background: #E3D5CA;
+    color: #ffffff;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    font-size: 1rem;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none; 
 }
 
-.user-item:hover {
-    background-color: #444048;
+.user-item:hover{
+    background-color: #d3c1b0;
+    color: #877569;
 }
 
-.writing-area {
-    flex: 1;
-    background-color: #2B2731;
-    display: none;
-    flex-direction: column;
-    padding: 10px;
-    height: calc(100vh - 64px);
-}
-
-.writing-area.active {
-    display: flex;
+.user-item.active {
+    background-color: #bbdefb;
+    color: #e3f2fd;
 }

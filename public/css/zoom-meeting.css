@@ -1,0 +1,115 @@
+
+.zoom-container {
+    margin-top:3rem;
+    background-color: #f9f1e9;
+    border: 1px solid #d5bdaf;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px #00000033;
+    font-family: 'Cookie', cursive;
+    overflow: hidden;
+    padding: 2rem;
+    text-align: center;
+}
+
+.zoom-message {
+    color: #5e503f;
+}
+
+.zoom-header h2 {
+    font-size: 20px;
+    color: #7f5539;
+    margin-bottom: 8px;
+}
+.zoom-header p {
+    color: #b08968;
+    margin-bottom: 4px;
+}
+.zoom-header span {
+    font-weight: bold;
+}
+
+#user-grid {   
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+#user-grid video {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    object-fit: cover;
+    background: #292929;
+}
+
+
+.user-tile {
+    background: #ede0d4;
+    border: 1px solid #e7e3ee;
+    padding: 16px;
+    border-radius: 12px;
+    text-align: center;
+}
+.user-tile:hover {
+    background: #fcd5ce;
+}
+
+.user-name {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #6c584c;
+}
+.user-status {
+    color: #6c584c;
+    font-size: 14px;
+}
+
+.user-video {
+    width: 100%;
+    height: 180px;
+    background: #2c2c2c;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.user-controls {
+    font-size: 14px;
+    color: #50483f;
+}
+
+.zoom-buttons {
+    margin-top: 24px;
+    text-align: center;
+}
+
+.btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    color: white;
+    margin: 0 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.camera-btn {
+    background-color: #ddbea9;
+}
+.camera-btn:hover {
+    background-color: #e3f2fd;
+}
+
+.mic-btn {
+    background-color: #ddbea9;
+}
+.mic-btn:hover {
+    background-color: #bee1e6;
+}
+
+.leave-btn {
+    background-color: #998573;
+}
+.leave-btn:hover {
+    background-color: #ffb3c1;
+}
