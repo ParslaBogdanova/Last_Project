@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     scrollToBottom();
-    
+
     const messageInput = document.getElementById('messageInput');
     
     messageInput.addEventListener('keypress', function(event) {
@@ -11,49 +11,49 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('fileInput').addEventListener('change', function(event) {
-        const filePreviewContainer = document.querySelector('.file-preview-container');
-        const filePreviewArea = document.getElementById('filePreviewArea');
-        
-        filePreviewArea.innerHTML = '';
-    
-        if (event.target.files.length > 0) {
-            filePreviewContainer.style.display = 'flex';
-        } else {
-            filePreviewContainer.style.display = 'none';
-        }
-    
-        Array.from(event.target.files).forEach(file => {
-            const reader = new FileReader();
-    
-            reader.onload = function(e) {
-                const fileType = file.type.split('/')[0];
-                const filePreviewItem = document.createElement('div');
-                filePreviewItem.classList.add('file-preview-item');
-    
-                if (fileType === 'image') {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.alt = file.name;
-                    img.classList.add('preview-image');
-                    filePreviewItem.appendChild(img);
-                } else {
-                    const fileLink = document.createElement('a');
-                    fileLink.href = e.target.result;
-                    fileLink.download = file.name;
-                    fileLink.textContent = file.name;
-                    filePreviewItem.appendChild(fileLink);
-                }
-    
-                filePreviewArea.appendChild(filePreviewItem);
-            };
-    
-            reader.readAsDataURL(file);
-        });
+        handleFilePreview(event.target.files);
     });
-    
 });
 
-//-----------------------------------------------------------------
+function handleFilePreview(files) {
+    const filePreviewContainer = document.querySelector('.file-preview-container');
+    const filePreviewArea = document.getElementById('filePreviewArea');
+    filePreviewArea.innerHTML = '';
+
+    if (files.length > 0) {
+        filePreviewContainer.style.display = 'flex';
+    } else {
+        filePreviewContainer.style.display = 'none';
+    }
+
+    Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            const fileType = file.type.split('/')[0];
+            const filePreviewItem = document.createElement('div');
+            filePreviewItem.classList.add('file-preview-item');
+
+            if (fileType === 'image') {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = file.name;
+                img.classList.add('preview-image');
+                filePreviewItem.appendChild(img);
+            } else {
+                const fileLink = document.createElement('a');
+                fileLink.href = e.target.result;
+                fileLink.download = file.name;
+                fileLink.textContent = file.name;
+                filePreviewItem.appendChild(fileLink);
+            }
+
+            filePreviewArea.appendChild(filePreviewItem);
+        };
+
+        reader.readAsDataURL(file);
+    });
+}
 
 function sendMessage() {
     const messageInput = document.getElementById("messageInput");
@@ -63,7 +63,6 @@ function sendMessage() {
 
     const messageContent = messageInput.value.trim();
     const files = fileInput.files;
-
 
     if (!messageContent && files.length === 0) {
         console.log("No message to send");
@@ -98,7 +97,15 @@ function sendMessage() {
             "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
         }
     })
-    .then(response => response.json())
+    .then(async response => {
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+        return response.json();
+    } else {
+        const text = await response.text();
+        throw new Error("Unexpected response: " + text);
+    }
+})
     .then(data => {
         if (data.message) {
             tempMessage.querySelector(".message-content").innerText = data.message.content;
@@ -113,7 +120,7 @@ function sendMessage() {
                     fileElement.download = file.file_name;
                     fileElement.textContent = file.file_name;
                     fileContainer.appendChild(fileElement);
-                
+    
                     if (file.file_name.match(/\.(jpg|jpeg|png)$/i)) {
                         let imagePreview = document.createElement("img");
                         imagePreview.src = file.file_url;
@@ -121,30 +128,24 @@ function sendMessage() {
                         fileContainer.appendChild(imagePreview);
                     }
                 });
-                
+    
                 tempMessage.querySelector(".message").appendChild(fileContainer);
             }
             scrollToBottom();
         }
+    
         setTimeout(() => {
             location.reload();
         }, 1000);
     })
-    
-    .catch(error => console.error("Error sending message:", error));
-
-    messageInput.value = "";
-
-    let newFileInput = document.createElement("input");
-    newFileInput.type = "file";
-    newFileInput.id = "fileInput";
-    newFileInput.name = "file";
-    newFileInput.accept = ".jpg,.jpeg,.png,.pdf,.docx,.txt";
-    newFileInput.style.display = "none";
-    fileInput.replaceWith(newFileInput);
-
-    document.getElementById("filePreviewArea").innerHTML = "";
+    .catch(error => {
+        console.error("Error sending message:", error);
+        alert("There is an error in your message. Please check the file you are trying to send.");
+    });
 }
+
+/*reloads the page and scrolls to the bottom of the latest message. It helps, when a user sends a...
+...document or image.*/
 window.onload = function() {
     setTimeout(() => {
         const chatMessages = document.getElementById('chatMessages');
@@ -153,7 +154,6 @@ window.onload = function() {
         }
     }, 100);
 };
-
 
 function scrollToBottom() {
     const chatMessages = document.getElementById('chatMessages');
@@ -216,7 +216,7 @@ function saveEditedMessage(messageId) {
             editMessage(messageId);
         };
     })
-    .catch(error => console.error('Error saving edited message:', error));
+    .catch(error => console.error('Something went wrong with update function:', error));
 }
 
 //-------------------------DELETE MESSAGE---------------------------------
@@ -235,11 +235,8 @@ function deleteMessage(messageId) {
             messageContainer.remove();
             console.log('Message deleted');
         } else {
-            console.error('Error deleting message');
+            console.error('Something went wrong with delete function.');
         }
     })
     .catch(error => console.error('Error:', error));
 }
-
-
-
