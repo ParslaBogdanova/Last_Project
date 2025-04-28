@@ -38,7 +38,7 @@ class ZoomCallController extends Controller {
             return view('zoom-meeting.index', [
                 'zoomMeeting' => null,
                 'zoomCalls' => null,
-                'message' => 'No Zoom meetings scheduled for today.'
+                'message' => 'No Zoom meetings for you scheduled for today.'
             ]);
         }
     
