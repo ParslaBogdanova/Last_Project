@@ -6,7 +6,7 @@
 
     <div style="display: flex; height: calc(100vh - 64px);">
         <div class="sidebar">
-            <h1>Chats</h1>
+            <h1>Chats &#10000</h1>
             <div id="userList">
                 @foreach ($users as $user)
                     <div class="user-item">
