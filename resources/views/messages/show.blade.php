@@ -7,10 +7,10 @@
 
     <div style="display: flex; height: calc(100vh - 64px);">
         <div class="sidebar">
-            <h1>Chats</h1>
+            <h1>Chats &#10000</h1>
             <div id="userList">
                 @foreach ($users as $user)
-                    <div class="user-item">
+                    <div class="user-item {{ $user->id == $receiver_id ? 'active' : '' }}">
                         <a href="{{ route('messages.show', $user->id) }}" class="user-link">
                             <span>{{ $user->name }}</span>
                         </a>
@@ -21,11 +21,11 @@
 
         <div id="writingArea" class="writing-area {{ $receiver_id ? 'active' : '' }}">
             <div class="writing-content" id="chatMessages">
+
                 @if ($messages->isNotEmpty())
                     @php
                         $lastDate = null;
                     @endphp
-
                     @foreach ($messages as $message)
                         @php
                             $currentDate = \Carbon\Carbon::parse($message->created_at)->format('d M Y');
@@ -90,8 +90,8 @@
                 <input type="file" id="fileInput" name="file" accept=".jpg,.jpeg,.png,.pdf,.docx,.txt"
                     style="display: none;" multiple />
                 <input type="text" id="messageInput" placeholder="Type a message...">
-                <label for="fileInput" class="file-label" style="color:white">File opener</label>
-                <button onclick="sendMessage()" id="sendButton">Send</button>
+                <label for="fileInput" class="file-label" style=" cursor: pointer;">&#9993;</label>
+                <button onclick="sendMessage()" id="sendButton">&#10148;</button>
             </div>
         </div>
     </div>
@@ -100,8 +100,7 @@
 
     <div id="imageModal" class="image-modal">
         <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <img id="modalImage" src="" alt="Large image">
+            <img id="modalImage" src="">
         </div>
     </div>
 
