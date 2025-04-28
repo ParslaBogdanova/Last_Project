@@ -1,5 +1,5 @@
 <nav x-data="{ open: false }" class="w-64 min-h-screen text-white flex flex-col justify-between p-4 space-y-6"
-    style="background: linear-gradient(to top, #26201c, #4a403a);">
+    style="background: linear-gradient(to top, #c9b0a2, #ddccbf);">
 
     <style>
         .sidebar-links {
@@ -14,24 +14,26 @@
     </style>
     <div>
         <div class="mb-6 text-center">
-            <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
-            <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+            <div class="font-medium text-base" style="font-family: 'Cookie', cursive; font-size:20px;">
+                {{ Auth::user()->name }}</div>
+            <div class="font-medium text-sm" style="font-family: 'Cookie', cursive; color: #b2967d;">
+                {{ Auth::user()->email }}</div>
         </div>
 
         <div class="sidebar-links">
-            <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+            <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" style="color:#5e503f; font-weight:bold;">
                 {{ __('Dashboard') }}
             </x-nav-link>
-            <x-nav-link :href="route('tasks.index')" :active="request()->routeIs('tasks.*')">
+            <x-nav-link :href="route('tasks.index')" :active="request()->routeIs('tasks.*')" style="color:#5e503f;font-weight:bold;">
                 {{ __('Tasks') }}
             </x-nav-link>
-            <x-nav-link :href="route('calendar.index')" :active="request()->routeIs('calendar.*')">
+            <x-nav-link :href="route('calendar.index')" :active="request()->routeIs('calendar.*')" style="color:#5e503f;font-weight:bold;">
                 {{ __('Calendar') }}
             </x-nav-link>
-            <x-nav-link :href="route('messages.index')" :active="request()->routeIs('messages.*')">
+            <x-nav-link :href="route('messages.index')" :active="request()->routeIs('messages.*')" style="color:#5e503f;font-weight:bold;">
                 {{ __('Messages') }}
             </x-nav-link>
-            <x-nav-link :href="route('zoom-meeting.index')" :active="request()->routeIs('zoom-meeting.*')">
+            <x-nav-link :href="route('zoom-meeting.index')" :active="request()->routeIs('zoom-meeting.*')" style="color:#5e503f;font-weight:bold;">
                 {{ __('Zoom Meeting Testing') }}
             </x-nav-link>
         </div>
@@ -42,7 +44,7 @@
         <div class="sm:flex sm:items-center sm:ms-0 hidden">
             <div
                 class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-[#4a403a] hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                <div style="font-family: 'Cookie', cursive;">Settings</div>
+                <div style="font-family: 'Cookie', cursive; font-size: 20px">Settings</div>
             </div>
         </div>
 
@@ -64,7 +66,8 @@
             <div class="space-y-1">
             </div>
             <div s style="font-family: 'Cookie', cursive;">
-                <x-responsive-nav-link :href="route('profile.edit')">
+                <x-responsive-nav-link :href="route('profile.edit')" style="color:#5e503f;border-radius:8px"
+                    onmouseover="this.style.backgroundColor='#d9c1b4'" onmouseout="this.style.backgroundColor=''">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 
@@ -74,7 +77,9 @@
 
                     <x-responsive-nav-link :href="route('logout')"
                         onclick="event.preventDefault();
-                                        this.closest('form').submit();">
+                                        this.closest('form').submit();"
+                        style="color:#5e503f;border-radius:8px" onmouseover="this.style.backgroundColor='#d9c1b4'"
+                        onmouseout="this.style.backgroundColor=''">
                         {{ __('Log Out') }}
                     </x-responsive-nav-link>
                 </form>
