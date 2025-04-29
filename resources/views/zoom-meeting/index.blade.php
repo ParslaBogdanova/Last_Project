@@ -42,6 +42,45 @@
         </div>
     </div>
 
+    <main class="issues-zoom-call">
+        <div class="container">
+            <div class="issues">
+                <h2>Having issues with your camera? Is it glitching?</h2>
+                <div class="issues-info">
+                    <br>Don't worry, it happened to me too. One reason could be that you didn't turn off the camera
+                    before leaving the Zoom meeting.
+                    <div class="bottom-text">
+                        Don't forget to turn off the camera before leaving the zoom call.
+                    </div>
+                </div>
+            </div>
+            <div class="issues-solving">
+                <h2>How to solve problems that i used:</h2>
+                <div class="problem-solving-info">
+                    Open <strong>Settings &#8594; Privacy & Security &#8594; Camera</strong>. Make sure "Camera access"
+                    is
+                    turned on. Then check "Camera device settings" - if no device appears under "Connected
+                    cameras", the camera may be glitching. <br><br>
+
+                    Search for <strong>Device Manager</strong>. If the camera appears and disappears repeatedly,
+                    right-click it under "Cameras" and select "Update driver" or "Uninstall device". After
+                    uninstalling, restart your PC to reinstall it automatically.<br><br>
+
+                    Press <strong>Win + R</strong>, type <code>services.msc</code>, then press Enter. In the
+                    list, find <strong>Windows Camera Frame Server</strong> and <strong>Windows Camera Frame Server
+                        Monitor</strong>. Right-click each and choose "Restart".<br><br>
+
+                    If you're still having issues, open <strong>Command Prompt as Administrator</strong> and run
+                    the following command:<br>
+                    <code>sfc /scannow</code><br>
+                    You can also try: <code>chkdsk /f /r</code> (this will scan and fix drive issues after a
+                    reboot).
+                </div>
+            </div>
+        </div>
+    </main>
+
+
 
 
     <script>
