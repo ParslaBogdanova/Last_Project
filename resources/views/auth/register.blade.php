@@ -7,7 +7,7 @@
             justify-content: center;
             align-items: center;
             font-size: 40px;
-            font-family: Sans-Serif;
+            font-family: 'Cookie', cursive;
             color: #C6AC8F;
         }
 
@@ -51,7 +51,7 @@
             margin-bottom: 30px;
             width: 90%;
             margin-left: 5%;
-            font-family: sans-serif;
+            font-family: 'Cookie', cursive;
         }
 
         .button:hover {
@@ -115,7 +115,7 @@
 
         <div>
             <div class="flex items-center justify-center">
-                <a class="link" href="{{ route('login') }}">
+                <a class="link" href="{{ route('login') }}" style="font-family: 'Cookie', cursive;">
                     {{ __('Already have an account?') }}
                 </a>
             </div>

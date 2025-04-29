@@ -6,7 +6,7 @@
             justify-content: center;
             align-items: center;
             font-size: 40px;
-            font-family: Sans-Serif;
+            font-family: 'Cookie', cursive;
             color: #C6AC8F;
         }
 
@@ -37,7 +37,7 @@
             margin-top: 20px;
             width: 90%;
             margin-left: 5%;
-            font-family: sans-serif;
+            font-family: 'Cookie', cursive;
             margin-bottom: 30px;
             justify-content: center;
         }
@@ -58,12 +58,12 @@
         .account {
             margin-right: 5%;
             margin-top: -16px;
-            font-family: Sans-Serif;
+            font-family: 'Cookie', cursive;
         }
 
         .forgot-password {
             margin-right: 5%;
-            font-family: Sans-Serif;
+            font-family: 'Cookie', cursive;
         }
 
         .link:hover {
@@ -76,7 +76,7 @@
             margin-left: 5%;
             width: 90%;
             color: #b5b4b3;
-            font-family: Sans-Serif;
+            font-family: 'Cookie', cursive;
         }
 
         .remember-checkbox {
