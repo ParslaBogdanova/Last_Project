@@ -1,38 +1,47 @@
 <x-app-layout>
-    <div class="p-6">
+
+    <head>
+        <link rel="stylesheet" href="{{ asset('css/zoom-meeting.css') }}">
+    </head>
+    <div class="zoom-container">
         @if ($message)
-            <p>{{ $message }}</p>
+            <div class="zoom-message">
+                {{ $message }}
+            </div>
         @endif
 
         @if ($zoomMeeting)
-            <h2>{{ $zoomMeeting->title_zoom }}</h2>
-            <p>Start Time: {{ $zoomMeeting->start_time }}</p>
-            <p>End Time: {{ $zoomMeeting->end_time }}</p>
+            <div class="zoom-header">
+                <h2>"{{ $zoomMeeting->title_zoom }}"</h2>
+                <p>Start Time: <span>{{ $zoomMeeting->start_time }}</span> - End
+                    Time:<span> {{ $zoomMeeting->end_time }}</span>
+                </p>
+            </div>
 
-            <div id="user-grid" class="grid grid-cols-2 gap-4">
+            <div id="user-grid" class="user-grid">
                 @if (!is_null($zoomCalls))
                     @foreach ($zoomCalls as $call)
-                        <div class="border p-4 rounded shadow text-center" id="user-tile-{{ $call->user->id }}">
-                            <p class="font-semibold">{{ $call->user->name }}: {{ $call->status }}</p>
-                            <video id="video-{{ $call->user->id }}" autoplay playsinline
-                                class="w-full h-40 bg-black rounded" muted></video>
-                            <div class="mt-2">
-                                <span id="mic-status-{{ $call->user->id }}" class="text-gray-500 text-sm">Mic Off</span>
-                                |
-                                <span id="cam-status-{{ $call->user->id }}" class="text-gray-500 text-sm">Cam Off</span>
+                        <div class="user-tile" id="user-tile-{{ $call->user->id }}">
+                            <p class="user-name">{{ $call->user->name }}: <span
+                                    class="user-status">{{ $call->status }}</span></p>
+                            <video id="video-{{ $call->user->id }}" autoplay playsinline muted
+                                class="user-video"></video>
+                            <div class="user-controls">
+                                <span id="mic-status-{{ $call->user->id }}">Mic Off</span> |
+                                <span id="cam-status-{{ $call->user->id }}">Cam Off</span>
                             </div>
                         </div>
                     @endforeach
+                @endif
             </div>
         @endif
-        @endif
+        <div class="zoom-buttons">
+            <button onclick="toggleCamera()" class="btn camera-btn">Camera</button>
+            <button onclick="toggleMic()" class="btn mic-btn">Mic</button>
+            <button onclick="leaveCall()" class="btn leave-btn">End/Leave call</button>
+        </div>
     </div>
 
-    <div class="mt-6 space-x-2">
-        <button onclick="toggleCamera()" class="bg-blue-500 text-white px-4 py-2 rounded">Toggle Camera</button>
-        <button onclick="toggleMic()" class="bg-green-500 text-white px-4 py-2 rounded">Toggle Mic</button>
-        <button onclick="leaveCall()" class="bg-red-500 text-white px-4 py-2 rounded">Leave Call</button>
-    </div>
 
 
     <script>
@@ -47,7 +56,6 @@
                     audio: true
                 });
             }
-
             camOn = !camOn;
             const videoTrack = localStream.getVideoTracks()[0];
             if (videoTrack) videoTrack.enabled = camOn;
@@ -63,7 +71,6 @@
                     audio: true
                 });
             }
-
             micOn = !micOn;
             const audioTrack = localStream.getAudioTracks()[0];
             if (audioTrack) audioTrack.enabled = micOn;
@@ -76,7 +83,6 @@
                 localStream.getTracks().forEach(track => track.stop());
                 localStream = null;
             }
-
             window.location.href = '/tasks';
         }
     </script>
