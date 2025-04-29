@@ -1,0 +1,118 @@
+.container-log-in{
+    background-color: #f9f1e9;
+    border: 1px solid #d5bdaf;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    font-family: 'Cookie', cursive;
+    color: #5e503f;
+    overflow: hidden;
+    padding: 2rem;
+    text-align: center;
+}
+
+.issues-zoom-call{
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 20px;
+}
+
+.warning,
+.project-info,
+.calendar,
+.zoom-meeting,
+.future-plans,
+.reminder {
+    flex: 1;
+    min-width: 0;
+    height: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 8px;
+    border: 1px solid #d3c1b0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.warning h2,
+.project-info h2,
+.calendar h2,
+.zoom-meeting h2,
+.future-plans h2,
+.reminder h2 {
+    color:#5e503f;
+    text-align: center;
+    font-family: 'Cookie', cursive;
+    font-size: 18px;
+    margin-bottom: 2rem;
+}
+
+.warning h2{
+    color:#df8c78;
+}
+.project-info h2 {
+    color:#887a6a;
+}
+.calendar h2{
+    color:#9ed0e4;
+}
+.zoom-meeting h2 {
+    color:#887a6a;
+}
+.future-plans h2 {
+    color:#9bc08c;
+}
+.reminder h2 {
+    color:#df8c78;
+}
+
+.warning-info,
+.project-info-info,
+.calendar-info,
+.zoom-meeting-info,
+.future-plans-info,
+.reminder-info{
+    font-family: 'Cookie', cursive;
+    color:#8d8a87;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none; 
+}
+
+.warning-info::-webkit-scrollbar,
+.project-info-info::-webkit-scrollbar,
+.calendar-info::-webkit-scrollbar,
+.zoom-meeting-info::-webkit-scrollbar,
+.future-plans-info::-webkit-scrollbar,
+.reminder-info::-webkit-scrollbar {
+    display: none;
+}
+
+.warning{
+    border-left-color: #df8c78;
+}
+.project-info{
+    border-left-color: #5e503f;
+}
+.calendar {
+    border-left-color: #9ed0e4;
+}
+.zoom-meeting {
+    border-left-color: #5e503f; 
+}
+.future-plans {
+    border-left-color: #9bc08c; 
+}
+.reminder {
+    border-left-color: #df8c78; 
+}

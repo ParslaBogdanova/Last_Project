@@ -113,3 +113,63 @@
 .leave-btn:hover {
     background-color: #ffb3c1;
 }
+.issues-zoom-call{
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+/*----------------------------TEXTS----------------------------*/
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px;
+}
+
+.issues,
+.issues-solving {
+    flex: 1;
+    min-width: 0;
+    height: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 8px;
+    border: 1px solid #d3c1b0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.issues h2,
+.issues-solving h2{
+    color:#5e503f;
+    text-align: center;
+    font-family: 'Cookie', cursive;
+    font-size: 18px;
+    margin-bottom: 1rem;
+}
+
+.issues-info{
+    font-family: 'Cookie', cursive;
+    color:#8d8a87;
+}
+
+.bottom-text{
+    margin-bottom: auto;
+}
+
+.problem-solving-info {
+    font-family: 'Cookie', cursive;
+    color:#8d8a87;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none; 
+}
+
+.problem-solving-info::-webkit-scrollbar {
+    display: none;
+}

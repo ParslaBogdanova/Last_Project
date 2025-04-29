@@ -1,0 +1,140 @@
+
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background: linear-gradient(to top, #b8a188, #f0cfb6);
+}
+
+
+.header {
+    display: flex;
+    font-family: 'Cookie', cursive;
+    color:#6c584c;
+    justify-content: flex-end;
+    padding: 1rem 3rem;
+}
+
+.login:hover{
+    color:#8d776a;
+}
+
+.register:hover{
+    color:#8d776a;
+}
+
+.nav-links a {
+    margin-left: 2rem;
+}
+
+.image-border {
+    width: 100vw;
+    height: 500px;
+    background-size: cover;
+    background-position: center;
+    padding: 2rem; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    box-shadow: 0 4px 8px #00000033;
+}
+
+
+.image-content {
+    text-align: center;
+    font-family: 'Cookie', cursive;
+    background: rgba(168, 141, 130, 0.5);
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.image-content h2{
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.spacer {
+    height: 2rem;
+}
+
+.card-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 2rem;
+}
+
+.card {
+    flex: 1;
+    min-width: 200px;
+    max-width: 250px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 8px;
+    border: 1px solid #ebebeb;
+    font-family: 'Cookie', cursive;
+    background-color:#a88d8280;
+    box-shadow: 0 4px 8px #00000033;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.card-section h3{
+    font-size: 20px;
+    margin-bottom: 1rem;
+    color:#f3f3f3;
+    text-align: center;
+}
+
+.info{
+    text-align: center;
+    color:#f3f3f3;
+}
+
+.card-warning {
+    flex: 1;
+    min-width: 200px;
+    max-width: 250px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 8px;
+    border: 1px solid #ebebeb;
+    font-family: 'Cookie', cursive;
+    background-color:#ffccd5;
+    box-shadow: 0 4px 8px #d11f1f33;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.card-warning h3{
+    font-size: 20px;
+    margin-bottom: 1rem;
+    color:#383838;
+    text-align: center;
+}   
+
+.info-warning {
+    text-align: center;
+    color:#ff758f;
+}
+
+.card:hover,
+.card-warning:hover,
+.image-content:hover {
+    transform: translateY(-5px);
+    transition: 0.5s ease;
+}
+
+
+.footer {
+    text-align: center;
+    padding: 2rem;
+    color:#6d5d4e;
+}
