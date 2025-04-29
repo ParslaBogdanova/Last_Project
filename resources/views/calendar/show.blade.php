@@ -69,7 +69,7 @@
                         </div>
                     </div>
                     <div id="blockForm" class="blockForm" style="display: none;">
-                        <button class="close-btn" onclick="closeBlockedDays()">X</button>
+                        <button class="close-btn" onclick="closeBlockedDays()">&#9866;</button>
                         <form
                             action="{{ route('calendar.blockDay', ['month' => $month, 'year' => $year, 'date' => $day->date]) }}"
                             method="POST" id="block-form">
@@ -79,7 +79,7 @@
                         </form>
                     </div>
                     <div id="zoomForm" class="zoomForm" style="display:none;">
-                        <button class="close-btn" onclick="closeZoomForm()">X</button>
+                        <button class="close-btn" onclick="closeZoomForm()">&#9866;</button>
                         <form
                             action="{{ route('zoom_meetings.store', ['month' => $month, 'year' => $year, 'date' => $day->date]) }}"
                             method="POST" id="zoom-form">
