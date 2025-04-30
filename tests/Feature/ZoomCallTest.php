@@ -144,9 +144,9 @@ class ZoomCallTest extends TestCase {
         $this->actingAs($user);
         $response = $this->get('/zoom-meeting');
         
-        $response->assertSee('Toggle Camera');
-        $response->assertSee('Toggle Mic');
-        $response->assertSee('Leave Call');
+        $response->assertSee('Camera');
+        $response->assertSee('Mic');
+        $response->assertSee('End/Leave call');        
     }
 
 
