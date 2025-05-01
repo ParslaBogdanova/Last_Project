@@ -11,9 +11,6 @@ return new class extends Migration {
             $table->string('description');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->boolean('completed')->default(false);
-
-            $table->timestamp('week_start')->nullable();
-        $table->timestamp('week_end')->nullable();
             $table->timestamps();
         });
 
