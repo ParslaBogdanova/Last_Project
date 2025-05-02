@@ -42,23 +42,24 @@
                             <div class="message">
                                 <div class="message-content">{{ $message->content }}</div>
 
-                                <!-- Display Files -->
                                 @foreach ($message->files as $file)
                                     <div class="message-file" id="message-file-{{ $message->id }}">
-                                        @if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $file->file_path))
-                                            <a href="{{ Storage::url($file->file_path) }}" target="_blank">
-                                                <img src="{{ Storage::url($file->file_path) }}" alt="Sent Image"
+                                        @php $url = Storage::url($file->file_path); @endphp
+
+                                        @if (Str::endsWith($file->file_path, ['jpg', 'jpeg', 'png', 'gif']))
+                                            <a href="{{ $url }}" target="_blank">
+                                                <img src="{{ $url }}" alt="Sent Image"
                                                     style="max-width: 200px; cursor: pointer;" class="thumbnail-image"
-                                                    data-full-url="{{ Storage::url($file->file_path) }}">
+                                                    data-full-url="{{ $url }}">
                                             </a>
                                         @else
-                                            <a href="{{ Storage::url($file->file_path) }}"
-                                                download="{{ $file->file_title }}">
+                                            <a href="{{ $url }}" download="{{ $file->file_title }}">
                                                 {{ $file->file_title }}
                                             </a>
                                         @endif
                                     </div>
                                 @endforeach
+
 
                             </div>
 
@@ -77,8 +78,6 @@
                             @endif
                         </div>
                     @endforeach
-                @else
-                    <p>No messages yet. Start the conversation!</p>
                 @endif
             </div>
 
