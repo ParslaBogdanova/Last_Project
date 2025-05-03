@@ -22,10 +22,10 @@
 
         <div class="sidebar-links">
             <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" style="color:#5e503f; font-weight:bold;">
-                {{ __('Dashboard') }}
+                {{ __('Info about project') }}
             </x-nav-link>
             <x-nav-link :href="route('tasks.index')" :active="request()->routeIs('tasks.*')" style="color:#5e503f;font-weight:bold;">
-                {{ __('Tasks') }}
+                {{ __('Dashboard') }}
             </x-nav-link>
             <x-nav-link :href="route('calendar.index')" :active="request()->routeIs('calendar.*')" style="color:#5e503f;font-weight:bold;">
                 {{ __('Calendar') }}
