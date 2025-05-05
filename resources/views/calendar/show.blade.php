@@ -278,13 +278,15 @@
 
     <script>
         function navigateDay(direction) {
-            const currentDate = new Date("{{ $day->date }}");
-            const newDate = new Date(currentDate);
+            const currentDate = new Date("{{ $day->date }}"); // Get the current day from Blade variable.
+            const newDate = new Date(currentDate); // Create a copy of the current date.
 
             newDate.setDate(currentDate.getDate() + (direction === 'next' ? 1 : -1));
 
+            // Format the new date as YYYY-MM-DD.
             const newDateStr = newDate.toISOString().split('T')[0];
 
+            // Redirect to the new date URL, replacing placeholders.
             window.location.href =
                 `{{ route('calendar.show', ['month' => '__MONTH__', 'year' => '__YEAR__', 'date' => '__DATE__']) }}`
                 .replace('__MONTH__', newDate.getMonth() + 1).replace('__YEAR__', newDate.getFullYear()).replace(
@@ -329,12 +331,15 @@
             document.getElementById('edit_start_time').value = selectedZoomMeeting.start_time;
             document.getElementById('edit_end_time').value = selectedZoomMeeting.end_time;
 
+
+            // Populate invited users if not already populated.
             if (invitedUsers.length === 0) {
                 invitedUsers = selectedZoomMeeting.invited_users || selectedZoomMeeting.users.map(user => user.id) || [];
             }
 
-            updateInvitedUsersUI();
+            updateInvitedUsersUI(); // Update the UI with the invited users.
 
+            // Set the form action for editing the Zoom meeting.
             document.getElementById('editZoomMeeting').action =
                 "{{ route('zoom_meetings.update', ['month' => $month, 'year' => $year, 'date' => $day->date, 'id' => '']) }}/" +
                 selectedZoomMeeting.id;
@@ -350,13 +355,13 @@
             invitedUsersList.innerHTML = '';
             invitedUsersSelect.innerHTML = '';
 
-            const invitedUsersSet = new Set(invitedUsers);
+            const invitedUsersSet = new Set(invitedUsers); // Use a Set to filter out duplicate users.
             allUsers.forEach(user => {
                 if (!invitedUsersSet.has(user.id)) {
                     let option = document.createElement('option');
                     option.value = user.id;
                     option.textContent = user.name;
-                    invitedUsersSelect.appendChild(option);
+                    invitedUsersSelect.appendChild(option); // Add to the select dropdown.
                 }
             });
         }

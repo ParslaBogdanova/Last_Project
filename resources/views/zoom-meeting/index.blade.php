@@ -79,15 +79,21 @@
             </div>
         </div>
     </main>
-
-
-
-
     <script>
-        let localStream;
-        let micOn = false;
-        let camOn = false;
+        let localStream; // Stores the local media stream (audio and video)
+        let micOn = false; // Tracks whether the microphone is on or off
+        let camOn = false; // Tracks whether the camera is on or off
 
+
+
+        /**
+         * Toggles the camera on/off.
+         * 
+         * This function checks if a local media stream has been established; if not,
+         * it requests access to the user's media devices (audio and video). Then it 
+         * toggles the camera state and updates the video element accordingly.
+         * The camera status (On/Off) is reflected in the UI by updating the corresponding text.
+         */
         async function toggleCamera() {
             if (!localStream) {
                 localStream = await navigator.mediaDevices.getUserMedia({
@@ -95,16 +101,30 @@
                     audio: true
                 });
             }
-            camOn = !camOn;
+            camOn = !camOn; // Toggle the camera state (on or off)
+
+            // Enable or disable the video track based on the camera state
             const videoTrack = localStream.getVideoTracks()[0];
             if (videoTrack) videoTrack.enabled = camOn;
 
+            // Update the UI to reflect the camera status
             document.getElementById('cam-status-{{ auth()->id() }}').textContent = camOn ? 'Cam On' : 'Cam Off';
             document.getElementById('video-{{ auth()->id() }}').srcObject = camOn ? localStream : null;
         }
 
+
+
+        /**
+         * Toggles the microphone on/off.
+         * 
+         * This function checks if a local media stream has been established; if not,
+         * it requests access to the user's media devices (audio and video). Then it 
+         * toggles the microphone state and updates the UI accordingly.
+         * The microphone status (On/Off) is reflected in the UI by updating the corresponding text.
+         */
         async function toggleMic() {
             if (!localStream) {
+                // Request user media (audio and video) if localStream is not already established
                 localStream = await navigator.mediaDevices.getUserMedia({
                     video: true,
                     audio: true
@@ -117,6 +137,14 @@
             document.getElementById('mic-status-{{ auth()->id() }}').textContent = micOn ? 'Mic On' : 'Mic Off';
         }
 
+
+
+        /**
+         * Ends the call and stops all media tracks.
+         * 
+         * This function stops all the media tracks (audio and video) of the local stream
+         * and resets the localStream to null. It then redirects the user to the `/tasks` page.
+         */
         function leaveCall() {
             if (localStream) {
                 localStream.getTracks().forEach(track => track.stop());

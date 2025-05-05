@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Scroll to the bottom of the chat after the page loads
     scrollToBottom();
 
     const messageInput = document.getElementById('messageInput');
@@ -15,6 +16,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+
+/**
+ * Handles file preview by displaying images or file links in the UI.
+ * 
+ * This function is triggered when files are selected through the file input. 
+ * It reads the file(s) and creates a preview for each file. For image files, 
+ * it shows a thumbnail preview. For other file types, it provides a download 
+ * link.
+ * 
+ * @param {FileList} files - The list of files selected by the user.
+ */
 function handleFilePreview(files) {
     const filePreviewContainer = document.querySelector('.file-preview-container');
     const filePreviewArea = document.getElementById('filePreviewArea');
@@ -55,6 +67,19 @@ function handleFilePreview(files) {
     });
 }
 
+
+
+/**
+ * Sends a message along with any attached files to the server.
+ * Users don't have to send a attached file, content alone is enough
+ * 
+ * This function listens for the Enter key in the message input field, and when
+ * pressed, it sends the content of the message along with any selected files
+ * to the server using a POST request. It also updates the UI by adding the 
+ * sent message to the chat.
+ * 
+ * @function sendMessage
+ */
 function sendMessage() {
     const messageInput = document.getElementById("messageInput");
     const fileInput = document.getElementById("fileInput");
@@ -69,6 +94,8 @@ function sendMessage() {
         return;
     }
 
+
+    // Create a temporary message container to display while the message is being sent
     let tempMessage = document.createElement("div");
     tempMessage.classList.add("message-container", "sent");
     tempMessage.innerHTML = `
@@ -133,7 +160,8 @@ function sendMessage() {
             }
             scrollToBottom();
         }
-    
+        
+        // reload page inputs
         setTimeout(() => {
             location.reload();
         }, 1000);
@@ -155,6 +183,12 @@ window.onload = function() {
     }, 100);
 };
 
+
+
+/**
+ * Scrolls the chat window to the bottom so that the user can always see the latest message.
+ * Useful after sending a message or when the page reloads.
+ */
 function scrollToBottom() {
     const chatMessages = document.getElementById('chatMessages');
     chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -176,6 +210,12 @@ document.addEventListener('click', function(e) {
 
 //----------------------EDIT MESSAGE------------------------------------
 
+/**
+ * Edits an existing message by replacing its content with an input field.
+ * The button is changed to "Save" to allow saving the edited message.
+ * 
+ * @param {number} messageId - The ID of the message to be edited.
+ */
 function editMessage(messageId) {
     const messageContainer = document.getElementById(`message-${messageId}`);
     const messageContent = messageContainer.querySelector('.message-content').textContent;
@@ -192,6 +232,11 @@ function editMessage(messageId) {
 
 //------------------------UPDATE MESSAGE----------------------------------
 
+/**
+ * Saves the edited message by sending the new content to the server.
+ * 
+ * @param {number} messageId - The ID of the message to save.
+ */
 function saveEditedMessage(messageId) {
     const messageContainer = document.getElementById(`message-${messageId}`);
     const newContent = messageContainer.querySelector('.message-content input').value;
@@ -221,6 +266,11 @@ function saveEditedMessage(messageId) {
 
 //-------------------------DELETE MESSAGE---------------------------------
 
+/**
+ * Deletes a message from the server and removes it from the UI.
+ * 
+ * @param {number} messageId - The ID of the message to be deleted.
+ */
 function deleteMessage(messageId) {
     fetch(`/messages/${messageId}`, {
         method: 'DELETE',

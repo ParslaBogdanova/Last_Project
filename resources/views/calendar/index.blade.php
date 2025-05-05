@@ -106,22 +106,51 @@
     </div>
     </div>
     <script>
+        /**
+         * Holds the current year value for navigation.
+         * Populated dynamically from Blade with server-rendered year.
+         * @type {number}
+         */
         let currentYear = {{ $year }};
 
+
+
+        /**
+         * Toggles the visibility of the month picker popup.
+         */
         function monthPicker() {
             const popup = document.getElementById('month-picker-popup');
             popup.style.display = (popup.style.display === 'none') ? 'block' : 'none';
         }
 
+
+
+        /**
+         * Changes the displayed year in the popup.
+         *
+         * @param {number} direction - Either 1 (next year) or -1 (previous year).
+         */
         function changeYear(direction) {
             currentYear += direction;
             document.getElementById('popup-year').innerText = currentYear;
         }
 
+
+
+        /**
+         * Redirects user to the calendar page for the selected month and year.
+         *
+         * @param {number} month - Month number (1–12).
+         */
         function goToMonth(month) {
             window.location.href = `/calendar/${month}/${currentYear}`;
         }
 
+
+
+        /**
+         * Automatically hides the popup if user clicks outside of it or the display element.
+         */
         document.addEventListener('click', function(e) {
             const popup = document.getElementById('month-picker-popup');
             const display = document.querySelector('.month-year-display');
