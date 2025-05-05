@@ -16,6 +16,16 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class TaskController extends Controller {
+
+/**
+ * Display the dashboard, including tasks, notifications, reminders, and zoom meetings.
+ *
+ * This method calculates the current week's start and end dates, fetches the logged-in user's tasks, 
+ * notifications, reminders, and zoom meetings, and passes them to the view.
+ *
+ * @return \Illuminate\View\View The view containing the dashboard data.
+ * Yes.. used 'tasks.index' as a dashboard.
+ */
     public function index() {
         $weekStart = Carbon::now()->startOfWeek();
         $weekEnd = Carbon::now()->endOfWeek();
@@ -47,7 +57,16 @@ class TaskController extends Controller {
     }
     
     
-
+/**
+ * Store a newly created task in the database.
+ *
+ * This method validates the incoming request and saves the new task to the database 
+ * with the description provided by the user.
+ *
+ * @param \Illuminate\Http\Request $request The incoming request containing the task description.
+ * 
+ * @return \Illuminate\Http\RedirectResponse Redirects back to the task index after storing the task.
+ */
     public function store(Request $request) {
         $request->validate([
             'description' => 'required|string|max:255',
@@ -63,7 +82,16 @@ class TaskController extends Controller {
     }
 
 
-
+/**
+ * Delete a specific task from the database.
+ *
+ * This method deletes the task with the given ID, ensuring that the task belongs 
+ * to the authenticated user.
+ *
+ * @param int $id The ID of the task to be deleted.
+ * 
+ * @return \Illuminate\Http\RedirectResponse Redirects back to the task index after deleting the task.
+ */
     public function destroy($id) {
         $task = Task::where('user_id', Auth::id())->findOrFail($id);
         $task->delete();
@@ -72,7 +100,16 @@ class TaskController extends Controller {
     }
 
     
-
+/**
+ * Update the completed status of a specific task.
+ *
+ * This method updates whether a task is marked as completed based on the user's request.
+ *
+ * @param \Illuminate\Http\Request $request The incoming request containing the completed status.
+ * @param int $id The ID of the task to update.
+ * 
+ * @return void
+ */
     public function updateCompleted(Request $request, $id) {
         $task = Task::where('user_id', Auth::id())->findOrFail($id);
         $task->completed = $request->completed;
@@ -80,7 +117,12 @@ class TaskController extends Controller {
     }
 
 
-    
+/**
+ * Reset the weekly data, specifically handling the transition from one week to the next for Zoom meetings.
+ * This method is called when Sunday at midnight hits, signaling the end of the current week.
+ *
+ * @return void
+ */    
     public function resetWeeklyData() {
         $weekEnd = Carbon::now()->endOfWeek();
     }

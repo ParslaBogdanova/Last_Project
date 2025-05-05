@@ -16,6 +16,19 @@ use Illuminate\Support\Facades\Auth;
 
 class ZoomMeetingController extends Controller {
 
+/**
+ * Display the form to create a new Zoom meeting. After choosing a specific date.
+ * 
+ * Retrieves the calendar `Day` instance for the provided date,
+ * and also fetches a list of users(including the 'Test User')
+ * to populate the invited users list.
+ *
+ * @param  int  $month  The month being viewed in the calendar
+ * @param  int  $year   The year being viewed in the calendar
+ * @param  string  $date  The date the meeting is to be created for (Y-m-d)
+ * 
+ * @return \Illuminate\View\View  The view for creating a Zoom meeting
+ */   
     public function create($month, $year, $date) {
         $day = Day::firstOrFail($date);
         $users = User::where('id', '!=', Auth::id())->get();
@@ -29,7 +42,20 @@ class ZoomMeetingController extends Controller {
     }
 
 
-
+/**
+ * Store a newly created Zoom meeting in the database.
+ * But also checks the availability of the invited users,
+ * checkUserAvailability() is used as a argument in store function.
+ * Along with scheduleReminders() & sendZoomMeetingNotification(), & ZoomCallData. Those only are activated when zoom meeting is successfully created.
+ * 
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @param  int  $month
+ * @param  int  $year
+ * @param  string  $date
+ * 
+ * @return \Illuminate\Http\RedirectResponse
+ */
     public function store(Request $request, $month, $year, $date) { 
         $day = Day::where('date', $date)
         ->whereHas('calendar', function ($query) {
@@ -94,6 +120,21 @@ class ZoomMeetingController extends Controller {
     }
     
 
+
+/**
+ * Display the edit form for an existing Zoom meeting.
+ * 
+ * Finds the ZoomMeeting by ID and shows a popup windows with the meeting's details.
+ * The meeting must exist, otherwise it throws a 404 error.
+ * Users have to be invited again, even its the old ones or new ones.
+ * 
+ * @param  int  $month  The current calendar month
+ * @param  int  $year   The current calendar year
+ * @param  string  $date  The date associated with the Zoom meeting
+ * @param  int  $zoom_meetings_id  The ID of the Zoom meeting to edit
+ * 
+ * @return \Illuminate\View\View  The view for editing the Zoom meeting
+ */
     public function edit($month, $year, $date, $zoom_meetings_id)
     {
         $zoomMeeting = ZoomMeeting::findOrFail($zoom_meetings_id);
@@ -105,6 +146,27 @@ class ZoomMeetingController extends Controller {
         ]);
     }
 
+
+
+/**
+ * Update an existing Zoom meeting's data and invited users.
+ * 
+ * First validates the request and checks whether the meeting exists and 
+ * is associated with the date. Then it ensures the user is authorized.
+ * It checks for availability of all users (using checkUserAvailability() asa argument again).
+ * 
+ * If no conflicts are found, it updates the meeting details and syncs
+ * the invited users list. Also sends notifications for added or removed users.
+ * For removed users, their notification doesn't send, because their data ID has already been deleted.
+ * For new invited users, it sends the same notification and reminder as everyone else in store function.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @param  int  $month
+ * @param  int  $year
+ * @param  string  $date
+ * 
+ * @return \Illuminate\Http\RedirectResponse
+ */
     public function update(Request $request, $month, $year, $date){
 
         $validateData = $request->validate([
@@ -178,6 +240,24 @@ class ZoomMeetingController extends Controller {
     }
 
 
+
+/**
+ * Deletes a Zoom meeting and detaches all invited users.
+ * 
+ * Removes associated user connections from the pivot table,
+ * and deletes the meeting. Responds with a JSON message upon success
+ * or returns an error message if deletion fails.
+ * 
+ * Before deletion process, the json message asks the creator if they are sure to delete the meeting. 
+ * If the host has approved, then the zoom meeting then deletes it.
+ *
+ * @param  int  $month
+ * @param  int  $year
+ * @param  string  $date
+ * @param  int  $zoomMeeting_id
+ * 
+ * @return \Illuminate\Http\JsonResponse
+ */
     public function destroy($month, $year, $date, $zoomMeeting_id) {
         $zoomMeeting = ZoomMeeting::find($zoomMeeting_id);
 
@@ -194,6 +274,19 @@ class ZoomMeetingController extends Controller {
     }
 
 
+
+/**
+ * Sends a notification to a list of users who are part of the  Zoom meeting.
+ * 
+ * Creates a Notification entry for each user in the provided list
+ * except the creator of the meeting.
+ *
+ * @param  \App\Models\ZoomMeeting  $zoomMeeting
+ * @param  array  $userIds  List of user IDs to notify
+ * @param  string  $message  Notification content
+ * 
+ * @return void
+ */
     private function sendZoomMeetingNotification($zoomMeeting, $userIds, $message) {
         foreach ($userIds as $userId) {
             if ($userId !== $zoomMeeting->creator_id) {
@@ -208,6 +301,29 @@ class ZoomMeetingController extends Controller {
     }
 
 
+
+
+/**
+ * Checks whether the invited users are available for the proposed meeting time.
+ * 
+ * This includes checking for blocked days (like vacations or personal events),
+ * and any existing Zoom meetings that would overlap with the new meeting’s time.
+ * 
+ * If `zoom_meeting_id` is provided, it excludes that meeting from conflict checking
+ * (useful during an update operation and create operation process.).
+ * 
+ * If someone is unavailable, then $conflictingMeeting(checks the other meetings time)
+ * & $blockedDay(checks if any of the invited users have blocked days created) is places in if statement,
+ * that gives in return $unavailableUsers[] array of user names and their unavailable reasons.
+ *
+ * @param  array  $invitedUsers
+ * @param  string  $date
+ * @param  string  $start_time
+ * @param  string  $end_time
+ * @param  int|null  $zoom_meeting_id  Optional meeting ID to exclude from check
+ * 
+ * @return array  List of users who are unavailable with reasons
+ */
     public function checkUserAvailability($invitedUsers, $date, $start_time, $end_time, $zoom_meeting_id = null) {
         $unavailableUsers = [];
 
@@ -257,7 +373,16 @@ class ZoomMeetingController extends Controller {
     }
 
 
-
+/**
+ * Schedules reminder entries for the creator and all invited users of a Zoom meeting.
+ * 
+ * These entries are stored in `ReminderZoomMeeting` and marked as unseen initially.
+ * 
+ * @param  \App\Models\ZoomMeeting  $zoomMeeting
+ * @param  array  $invitedUsers  List of user IDs
+ * 
+ * @return void
+ */
     private function scheduleReminders(ZoomMeeting $zoomMeeting, array $invitedUsers) {
 
         ReminderZoomMeeting::create([
@@ -275,6 +400,17 @@ class ZoomMeetingController extends Controller {
         }
     }
 
+
+
+/**
+ * Creates or updates Zoom call entries for each user invited to a Zoom meeting.
+ *  This includes the meeting creator. Status is always set to 'active'.
+ *
+ * @param  \App\Models\ZoomMeeting  $zoomMeeting
+ * @param  array  $invitedUsers  List of invited user IDs
+ * 
+ * @return void
+ */
     public function ZoomCallData(ZoomMeeting $zoomMeeting, array $invitedUsers) {
         ZoomCall::updateOrCreate(
             ['user_id' => $zoomMeeting->creator_id, 'zoom_meetings_id' => $zoomMeeting->id],

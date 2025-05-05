@@ -11,6 +11,19 @@ use App\Models\ReminderZoomMeeting;
 use App\Models\ZoomMeeting;
 
 class NotificationController extends Controller {
+
+/**
+ * Send notifications to users regarding a specific Zoom meeting.
+ *
+ * This method creates notifications for multiple users about a specific Zoom meeting.
+ * Each notification contains the Zoom meeting's ID and a custom message, along with a title of the zoom meeting and the creators name.
+ *
+ * @param int $zoomMeetingId The ID of the Zoom meeting for which the notifications are sent.
+ * @param array $userIds An array of user IDs to whom the notification will be sent.
+ * @param string $message The message content for the notification.
+ * 
+ * @return void
+ */
     public function sendNotification($zoomMeetingId, $userIds, $message) {
         $zoomMeeting = ZoomMeeting::findOrFail($zoomMeetingId);
     
@@ -24,7 +37,15 @@ class NotificationController extends Controller {
     }
 
 
-
+/**
+ * Display a list of notifications and reminders for the logged-in user.
+ * Reminders are meant to all users + invited users.
+ *
+ * This method retrieves all notifications and reminders for the logged-in user.
+ * It includes notifications related to Zoom meetings and reminders for upcoming Zoom meetings.
+ *
+ * @return \Illuminate\View\View The view containing the notifications and reminders for the user.
+ */
     public function index() {
         $userId = Auth::id();
         

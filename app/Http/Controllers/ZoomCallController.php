@@ -13,6 +13,14 @@ use Illuminate\Support\Collection;
 
 class ZoomCallController extends Controller {
 
+/**
+ * Display the Zoom meeting details and active calls for today.
+ *
+ * This method checks if there are any Zoom meetings scheduled for today and whether the user is invited to the meeting.
+ * It also checks whether the meeting has started or is still upcoming, and returns the appropriate message.
+ *
+ * @return \Illuminate\View\View
+ */
     public function index() {
         $currentDate = Carbon::now('Europe/Riga')->toDateString();
         $currentTime = Carbon::now('Europe/Riga')->toTimeString();
@@ -77,7 +85,16 @@ class ZoomCallController extends Controller {
 
    
 
-
+/**
+ * Store a new Zoom call record for the user, allowing them to join a Zoom meeting.
+ *
+ * This method checks if the user is invited to the Zoom meeting scheduled for today, and ensures the meeting is active.
+ * If the user is invited and the meeting is within the active time(all times the moment zoom meeting was created).
+ *
+ * @param \Illuminate\Http\Request $request
+ * 
+ * @return \Illuminate\Http\JsonResponse
+ */
     public function store(Request $request) {
         $user = Auth::user();
         $now = Carbon::now('Europe/Riga');
@@ -115,7 +132,17 @@ class ZoomCallController extends Controller {
 
 
 
-
+/**
+ * Display details of a specific Zoom meeting and active calls.
+ *
+ * This method displays the active Zoom meeting and the users currently in the meeting.
+ * It ensures that the meeting has started before showing the details.
+ *
+ * @param int $zoom_meetings_id
+ * @param string $title_zoom
+ * 
+ * @return \Illuminate\View\View|\Illuminate\Http\JsonResponse
+ */
     public function show($zoom_meetings_id, $title_zoom) {
     $zoomMeeting = ZoomMeeting::where('id', $zoom_meetings_id)
         ->where('title_zoom', $title_zoom)
@@ -140,7 +167,14 @@ class ZoomCallController extends Controller {
 
 
 
-
+/**
+ * Update the status of a Zoom call to 'ended' when the zoom meeting has end it.
+ *
+ * @param \Illuminate\Http\Request $request
+ * @param \App\Models\ZoomCall $zoomCall
+ * 
+ * @return \Illuminate\Http\JsonResponse
+ */
     public function update(Request $request, ZoomCall $zoomCall) {
         $user = Auth::user();
 
@@ -155,7 +189,16 @@ class ZoomCallController extends Controller {
 
 
 
-
+/**
+ * Delete a Zoom call record, effectively canceling the user's participation in the meeting.
+ *
+ * This method deletes the Zoom call record for the user who has canceled their participation.
+ * Basically, the one who created the zoom meeting, suddenly deletes the meeting, the zoom call also gets deleted from database.
+ *
+ * @param \App\Models\ZoomCall $zoomCall
+ * 
+ * @return \Illuminate\Http\JsonResponse
+ */
     public function destroy(ZoomCall $zoomCall) {
         $zoomCall->delete();
         return response()->json(['message' => 'The zoom meeting has been canceled']);
@@ -163,7 +206,14 @@ class ZoomCallController extends Controller {
 
 
 
-
+/**
+ * Start a Zoom meeting and activate all associated Zoom calls.
+ * This method sets the meeting status to 'active' and activates all Zoom calls associated with the meeting.
+ *
+ * @param int $zoomMeetingId
+ * 
+ * @return \Illuminate\Http\RedirectResponse
+ */
     public function start($zoomMeetingId) {
         $zoomMeeting = ZoomMeeting::findOrFail($zoomMeetingId);
         $zoomMeeting->update(['status' => 'active']);
@@ -178,7 +228,14 @@ class ZoomCallController extends Controller {
     
 
 
-
+/**
+ * End a Zoom meeting and deactivate all associated Zoom calls.
+ * This method updates the meeting's status to 'ended' and marks all associated Zoom calls as ended.
+ *
+ * @param int $zoomMeetingId
+ * 
+ * @return \Illuminate\Http\JsonResponse
+ */
     public function end($zoomMeetingId) {
         $zoomMeeting = ZoomMeeting::findOrFail($zoomMeetingId);
         $zoomMeeting->update(['status' => 'ended']);
@@ -188,7 +245,14 @@ class ZoomCallController extends Controller {
     }
 
 
-
+/**
+ * Redirect the user to the screen where they can join an active Zoom meeting.
+ * This method ensures that the Zoom meeting is currently active before allowing the user to join.
+ *
+ * @param int $zoomMeetingId
+ * 
+ * @return \Illuminate\View\View|\Illuminate\Http\JsonResponse
+ */
     public function joinScreen($zoomMeetingId) {
         $zoomMeeting = ZoomMeeting::findOrFail($zoomMeetingId);
         

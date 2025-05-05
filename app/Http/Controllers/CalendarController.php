@@ -13,6 +13,20 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class CalendarController extends Controller {
+
+/**
+ * Display the calendar for a specific month and year.
+ * And shows current date/month/year
+ * 
+ * This method generates the calendar for the user, showing the days of the month,
+ * along with related Zoom meetings and scheduling information.
+ * Also the blocked days reason with a different color.
+ * 
+ * @param int|null $month The month to display. Defaults to the current month.
+ * @param int|null $year The year to display. Defaults to the current year.
+ * 
+ * @return \Illuminate\View\View
+ */
     public function index($month = null, $year = null) {
         $currentDate = Carbon::now();
         $month = $month ?? $currentDate->month;
@@ -52,7 +66,18 @@ class CalendarController extends Controller {
     }
     
 
-
+/**
+ * Show the details for a specific day, including schedules, blocked days, and Zoom meetings.
+ * 
+ * This method retrieves all relevant information for a day, including user-specific data
+ * such as schedules and meetings, and passes them to the view.
+ * 
+ * @param int $month The month of the day to display.
+ * @param int $year The year of the day to display.
+ * @param string $date The specific date to display in "Y-m-d" format.
+ * 
+ * @return \Illuminate\View\View
+ */
     public function show($month, $year, $date) {
         $day = Day::with([
             'schedules',
@@ -88,6 +113,14 @@ class CalendarController extends Controller {
     }
     
 
+/**
+ * Generate days for a given calendar (month and year).
+ * This method creates day records for each day in the selected month.
+ * 
+ * @param \App\Models\Calendar $calendar The calendar instance to generate days for.
+ * 
+ * @return void
+ */
     private function generateDaysForMonth(Calendar $calendar) {
         $firstDayOfMonth = Carbon::create($calendar->year, $calendar->month, 1);
         $daysInMonth = $firstDayOfMonth->daysInMonth;
@@ -101,7 +134,14 @@ class CalendarController extends Controller {
     }
 
 
-
+/**
+ * Change the current month based on the user's direction (next or previous).
+ * Redirects the user to the calendar page for the new month.
+ * 
+ * @param int $direction The direction to move the calendar (1 for next, -1 for previous).
+ * 
+ * @return \Illuminate\Http\RedirectResponse
+ */
     public function changeMonth($direction) {
         $currentDate = Carbon::now();
         $month = $currentDate->month;
@@ -116,7 +156,19 @@ class CalendarController extends Controller {
     }
 
 
-
+/**
+ * Block a day for a user, preventing any meetings or events from being scheduled.
+ * If a day is blocked, all Zoom meetings involving the user on that day are canceled.
+ * If they are the creator, the zoom meeting is deleted as 'cancel'.
+ * If they are invited, they are removed from those zoom meetings.
+ * 
+ * @param \Illuminate\Http\Request $request The incoming request containing the block reason.
+ * @param int $month The month of the day being blocked.
+ * @param int $year The year of the day being blocked.
+ * @param \Carbon\Carbon $date The date being blocked.
+ * 
+ * @return \Illuminate\Http\RedirectResponse
+ */
     public function blockDay(Request $request, $month, $year, $date) {
         $userId = Auth::id();
     
@@ -161,7 +213,17 @@ class CalendarController extends Controller {
     }
 
 
-    
+/**
+ * Unblock a previously blocked day, restoring availability for meetings.
+ * But it needs to be blocked by choosing the same date.
+ * 
+ * @param \Illuminate\Http\Request $request The incoming request.
+ * @param int $month The month of the day being unblocked.
+ * @param int $year The year of the day being unblocked.
+ * @param \Carbon\Carbon $date The date being unblocked.
+ * 
+ * @return \Illuminate\Http\RedirectResponse
+ */   
     public function unblock(Request $request, $month, $year, $date) {
         $userId = Auth::id();
 

@@ -9,6 +9,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class MessageController extends Controller {
+
+/**
+ * Display the message list for a particular user or all users.
+ *
+ * @param int|null $user_id The ID of the receiver user. If not provided, it will show all messages.
+ * 
+ * @return \Illuminate\View\View The view for the message index with the users list that users can choose who they want to chat with.
+ */
     public function index($user_id = null) {
         $user = Auth::user();
         $users = User::where('id', '!=', $user->id)->get();
@@ -31,7 +39,14 @@ class MessageController extends Controller {
     }
 
 
-
+/**
+ * Store a new message and handle file uploads.
+ * Problem is that, user cn send content alone, but can send files alone without content.
+ *
+ * @param \Illuminate\Http\Request $request The incoming request containing message data and files.
+ * 
+ * @return \Illuminate\Http\JsonResponse The response containing the created message and uploaded file URLs.
+ */
     public function store(Request $request) {
         $validatedData = $request->validate([
             'content' => 'nullable|string|max:1000',
@@ -73,7 +88,13 @@ class MessageController extends Controller {
     }
     
     
-
+/**
+ * Display the message conversation with a specific user.
+ *
+ * @param int $user_id The ID of the receiver user to show the conversation with.
+ * 
+ * @return \Illuminate\View\View The view showing the messages between the logged-in user and the receiver.
+ */
     public function show($user_id) {
         $user = Auth::user();
         $users = User::where('id', '!=', $user->id)->get();
@@ -101,7 +122,13 @@ class MessageController extends Controller {
     }
 
 
-
+/**
+ * Edit a specific message.
+ *
+ * @param int $message_id The ID of the message to be edited.
+ * 
+ * @return \Illuminate\Http\JsonResponse The message data in JSON format for editing.
+ */
     public function edit($message_id) {
         $message = Message::findOrFail($message_id);
         return response()->json([
@@ -110,7 +137,14 @@ class MessageController extends Controller {
     }
 
 
-
+/**
+ * Update an specific message
+ *
+ * @param \Illuminate\Http\Request $request The incoming request containing the updated content.
+ * @param int $message_id The ID of the message to be updated.
+ * 
+ * @return \Illuminate\Http\JsonResponse The updated message data in JSON format.
+ */
     public function update(Request $request, $message_id) {
         $request->validate([
             'content' => 'required|string|max:1000',
@@ -126,7 +160,13 @@ class MessageController extends Controller {
     }
 
 
-
+/**
+ * Delete a specific message.
+ *
+ * @param int $messageId The ID of the message to be deleted.
+ * 
+ * @return \Illuminate\Http\Response Reloads the page after deletion process.
+ */
     public function destroy($messageId) {
         $message = Message::find($messageId);
         if ($message->sender_id !== Auth::id()) {
