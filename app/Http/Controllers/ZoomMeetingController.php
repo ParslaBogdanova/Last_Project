@@ -220,18 +220,12 @@ class ZoomMeetingController extends Controller {
     
         $previousUsers = $zoomMeeting->invitedUsers()->pluck('users.id')->toArray();
         $newUsers = array_diff($validateData['invited_users'], $previousUsers);
-        $removedUsers = array_diff($previousUsers, $validateData['invited_users']);
     
         if (!empty($newUsers)) {
             $message = "You have been added to a Zoom meeting: {$zoomMeeting->title_zoom}";
             $this->sendZoomMeetingNotification($zoomMeeting, $newUsers, $message);
         }
-    
-        if (!empty($removedUsers)) {
-            $message = "You have been removed from the Zoom meeting: {$zoomMeeting->title_zoom}";
-            $this->sendZoomMeetingNotification($zoomMeeting, $removedUsers, $message);
-        }
-    
+
         return redirect()->route('calendar.show', [
             'month' => $month,
             'year' => $year,
