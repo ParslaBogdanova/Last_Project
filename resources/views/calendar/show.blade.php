@@ -130,7 +130,7 @@
                                 <div class="delete-schedule" onclick="deleteSchedule(event, {{ $schedule->id }})">X
                                 </div>
                                 <div class="schedule-title">{{ $schedule->title }}</div>
-                                <div class="schedule-description">Topic: {{ $schedule->description }}</div>
+                                <div class="schedule-description">Description: {{ $schedule->description }}</div>
                             </div>
                         @endif
                     @endforeach
