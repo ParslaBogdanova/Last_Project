@@ -47,7 +47,6 @@ class CalendarController extends Controller {
         $nextMonth = $month == 12 ? 1 : $month + 1;
         $nextYear = $month == 12 ? $year + 1 : $year;
     
-        $user = Auth::user();
         $zoomMeetings = ZoomMeeting::all();
     
         $this->generateDaysForMonth($calendar);
