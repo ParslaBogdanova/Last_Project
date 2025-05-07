@@ -10,29 +10,6 @@ use Illuminate\Support\Facades\Auth;
 
 class ScheduleController extends Controller {
 
-/**
- * Show the form to create a schedule for a specific day.
- *
- * This method fetches the day corresponding to the specified date and 
- * passes it to the view to create a schedule for that day.
- * The schedule is not shared with anyone.
- *
- * @param int $month The month for which the schedule is being created.
- * @param int $year The year for which the schedule is being created.
- * @param string $date The specific date for which the schedule is being created.
- * 
- * @return \Illuminate\View\View The view with the day, month, and year data.
- */
-    public function create($month, $year, $date) {
-        $day = Day::firstOrFail($date);
-
-        return view('schedules.create', [
-            'day' => $day,
-            'month' => $month,
-            'year' => $year,
-        ]);
-    }
-
 
 /**
  * Store a new schedule in the database.
