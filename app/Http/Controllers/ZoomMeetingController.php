@@ -195,12 +195,6 @@ class ZoomMeetingController extends Controller {
     
         $unavailableUsers = $this->checkUserAvailability($invitedUsers, $date, $start_time, $end_time, $zoomMeeting->id);
     
-        if (!empty($unavailableUsers)) {
-            return redirect()->back()
-                ->with('error', 'Some users are unavailable for this meeting.')
-                ->with('unavailable_users', $unavailableUsers);
-        }
-    
         $zoomMeeting->update([
             'title_zoom' => $validateData['title_zoom'],
             'topic_zoom' => $validateData['topic_zoom'],
