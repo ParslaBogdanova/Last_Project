@@ -103,24 +103,12 @@ class ZoomCallController extends Controller {
         $nowTime = now()->format('H:i:s');
     
         $zoomMeeting = ZoomMeeting::findOrFail($zoomMeetingId);
-    
-        if ($zoomMeeting->date !== $today) {
-            return response()->json(['message' => 'This meeting is not scheduled for today.'], 403);
-        }
-    
-        if ($nowTime < $zoomMeeting->start_time || ($zoomMeeting->end_time && $nowTime > $zoomMeeting->end_time)) {
-            return response()->json(['message' => 'This meeting is not currently active.'], 403);
-        }
 
         $isInvited = DB::table('user_zoom_meetings')
             ->where('zoom_meetings_id', $zoomMeetingId)
             ->where('user_id', $user->id)
             ->where('date', $today)
             ->exists();
-    
-        if (!$isInvited) {
-            return response()->json(['message' => 'You are not invited to this meeting today.'], 403);
-        }
     
         $zoomCall = ZoomCall::updateOrCreate(
             ['zoom_meetings_id' => $zoomMeetingId, 'user_id' => $user->id],
@@ -240,8 +228,6 @@ class ZoomCallController extends Controller {
         $zoomMeeting = ZoomMeeting::findOrFail($zoomMeetingId);
         $zoomMeeting->update(['status' => 'ended']);
         $zoomMeeting->zoomCalls()->update(['status' => 'ended']);
-    
-        return response()->json(['message' => 'Call ended.']);
     }
 
 
