@@ -17,32 +17,6 @@ use Illuminate\Support\Facades\Auth;
 class ZoomMeetingController extends Controller {
 
 /**
- * Display the form to create a new Zoom meeting. After choosing a specific date.
- * 
- * Retrieves the calendar `Day` instance for the provided date,
- * and also fetches a list of users(including the 'Test User')
- * to populate the invited users list.
- *
- * @param  int  $month  The month being viewed in the calendar
- * @param  int  $year   The year being viewed in the calendar
- * @param  string  $date  The date the meeting is to be created for (Y-m-d)
- * 
- * @return \Illuminate\View\View  The view for creating a Zoom meeting
- */   
-    public function create($month, $year, $date) {
-        $day = Day::firstOrFail($date);
-        $users = User::where('id', '!=', Auth::id())->get();
-
-        return view('zoom_meetings.create', [
-            'day' => $day,
-            'month' => $month,
-            'year' => $year,
-            'users' => $users,
-        ]);
-    }
-
-
-/**
  * Store a newly created Zoom meeting in the database.
  * But also checks the availability of the invited users,
  * checkUserAvailability() is used as a argument in store function.
@@ -78,12 +52,6 @@ class ZoomMeetingController extends Controller {
         $end_time = $validatedData['end_time'];
     
         $unavailableUsers = $this->checkUserAvailability($invitedUsers, $date, $start_time, $end_time);
-    
-        if (!empty($unavailableUsers)) {
-            return redirect()->back()
-                ->with('error', 'Some users are unavailable for this meeting.')
-                ->with('unavailable_users', $unavailableUsers);
-        }
         
         $zoomMeeting = ZoomMeeting::create([
             'title_zoom' => $validatedData['title_zoom'],
@@ -119,35 +87,6 @@ class ZoomMeetingController extends Controller {
         ]);
     }
     
-
-
-/**
- * Display the edit form for an existing Zoom meeting.
- * 
- * Finds the ZoomMeeting by ID and shows a popup windows with the meeting's details.
- * The meeting must exist, otherwise it throws a 404 error.
- * Users have to be invited again, even its the old ones or new ones.
- * 
- * @param  int  $month  The current calendar month
- * @param  int  $year   The current calendar year
- * @param  string  $date  The date associated with the Zoom meeting
- * @param  int  $zoom_meetings_id  The ID of the Zoom meeting to edit
- * 
- * @return \Illuminate\View\View  The view for editing the Zoom meeting
- */
-    public function edit($month, $year, $date, $zoom_meetings_id)
-    {
-        $zoomMeeting = ZoomMeeting::findOrFail($zoom_meetings_id);
-        return view('zoom_meetings.edit', [
-            'zoomMeeting' => $zoomMeeting,
-            'month' => $month,
-            'year' => $year,
-            'date' => $date,
-        ]);
-    }
-
-
-
 /**
  * Update an existing Zoom meeting's data and invited users.
  * 
@@ -182,10 +121,6 @@ class ZoomMeetingController extends Controller {
         $zoomMeeting = ZoomMeeting::where('id', $validateData['zoom_meetings_id'])
                             ->where('date', $date)
                             ->firstOrFail();
-
-        if ($zoomMeeting->creator_id !== Auth::id() && ! $zoomMeeting->invitedUsers->pluck('id')->contains(Auth::id())) {
-            return response()->json(['error' => 'Unauthorized action'], 403);
-        }
                             
     
         $invitedUsers = $validateData['invited_users'];
