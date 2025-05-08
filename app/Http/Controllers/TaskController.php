@@ -22,6 +22,13 @@ class TaskController extends Controller {
  *
  * This method calculates the current week's start and end dates, fetches the logged-in user's tasks, 
  * notifications, reminders, and zoom meetings, and passes them to the view.
+ * 
+ * latest() method is a shortcut for ordering by created_at in descending order.
+ * Ensure that recent notifications appear first.
+ * 
+ * with('zoomMeeting') is eager loading the related zoomMeeting data. 
+ * It’s a relationship method(between ZoomMeeting and ReminderZoomMeeting models) that tells Laravel to load the related zoomMeeting model at the same time as the reminders.
+ * Based of the ID's.
  *
  * @return \Illuminate\View\View The view containing the dashboard data.
  * Yes.. used 'tasks.index' as a dashboard.

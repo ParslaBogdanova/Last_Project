@@ -11,7 +11,10 @@ use Illuminate\Support\Facades\Storage;
 class MessageController extends Controller {
 
 /**
- * Display the message list for a particular user or all users.
+ * Display the message list for a particular user or all users. This is build to have 1-to-1 conversation.
+ * orWhere() method is used to get messages in both directions, by both sender and receiver.
+ * orderBy(created_at', 'atc') method - it returns the oldest messages first to the newest. Based of the in migration $table->timestamp();
+ * get() retrieves all matching records from the database as a collection, using collect() method..
  *
  * @param int|null $user_id The ID of the receiver user. If not provided, it will show all messages.
  * 
@@ -63,6 +66,20 @@ class MessageController extends Controller {
         ]);
     
         $filesData = [];
+
+        //$request->hasFile('files'), checks if the file input names 'files' contains any files.
+        //It makes sure that user has actually uploaded files before proceeding.
+        //It returns the bool 'true', otherwise false.
+
+        //$request->file('files') as $file, the loop through each file that the user uploaded(files can be an array if multiple files are selected).
+        //It uploads and returns them as an array, which is then looped over to process each file individually.
+
+        //store() method saves uploaded file(es).
+        //First parameter 'messages' is the folder in which the file will be stored. public/storage/messages.
+        //Second parameter 'public' tells Laravel to store the file in the public disk.
+
+        //getClientOriginalName() - This retrieves the original name of the uploaded file (as it was on the user’s local machine).
+        //Storage::disk('public') accesses the public disk where files are stored. The url() method generates the public url.
     
         if ($request->hasFile('files')) {
             foreach ($request->file('files') as $file) {

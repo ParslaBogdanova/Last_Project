@@ -18,9 +18,14 @@ class CalendarController extends Controller {
  * Display the calendar for a specific month and year.
  * And shows current date/month/year
  * 
+ * Carbon - php library, that works with dates and time.
+ * 
  * This method generates the calendar for the user, showing the days of the month,
  * along with related Zoom meetings and scheduling information.
  * Also the blocked days reason with a different color.
+ * 
+ * Using in return function 'days' => $calendar->days()->get(),, it returns for calendar.index view
+ * related day entries for specific calendar(for each month.)
  * 
  * @param int|null $month The month to display. Defaults to the current month.
  * @param int|null $year The year to display. Defaults to the current year.
@@ -71,6 +76,11 @@ class CalendarController extends Controller {
  * This method retrieves all relevant information for a day, including user-specific data
  * such as schedules and meetings, and passes them to the view.
  * 
+ * whereHas() is used to filter models based on the existence of a relationship. Like Day(the child) has a relationship with a Calendar(the parent), of course if the parent calendar belongs to a current user.
+ * It firsts checks if the relationship exists('calendar' in day model.) Then applies
+ * inner $query(like($query->where('user_id', Auth::id())) to filter only those related models that match.
+ * Then returns only parent models that have at least one related model matching the condition.
+ * 
  * @param int $month The month of the day to display.
  * @param int $year The year of the day to display.
  * @param string $date The specific date to display in "Y-m-d" format.
@@ -116,6 +126,8 @@ class CalendarController extends Controller {
  * Generate days for a given calendar (month and year).
  * This method creates day records for each day in the selected month.
  * 
+ * Using 'range' to generate an array of numbers from 1 to the number of the days in the month.
+ * 
  * @param \App\Models\Calendar $calendar The calendar instance to generate days for.
  * 
  * @return void
@@ -128,6 +140,7 @@ class CalendarController extends Controller {
             Day::firstOrCreate([
                 'calendar_id' => $calendar->id,
                 'date' => $firstDayOfMonth->copy()->day($day)->toDateString(),
+                //method toDateString formats the date to a simple YYYY-MM-DD string without time.
             ]);
         }
     }
@@ -160,6 +173,9 @@ class CalendarController extends Controller {
  * If a day is blocked, all Zoom meetings involving the user on that day are canceled.
  * If they are the creator, the zoom meeting is deleted as 'cancel'.
  * If they are invited, they are removed from those zoom meetings.
+ * 
+ * Using firstOrFail() is a method, it tries to find the first matching record from the database.
+ * If a Day(date attribute) exists, it returns the first match, if it doesn't, then it throws an exception and Laravel shows 404 error page.
  * 
  * @param \Illuminate\Http\Request $request The incoming request containing the block reason.
  * @param int $month The month of the day being blocked.
@@ -194,6 +210,7 @@ class CalendarController extends Controller {
 
         foreach ($invitedMeetings as $meeting) {
             $meeting->invitedUsers()->detach($userId);
+            //detach method, many-to-many relationship, that removes the connection between two models, without deleting either model from the database.
         }
 
         // 2. Meetings where user is the creator

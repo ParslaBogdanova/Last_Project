@@ -18,6 +18,8 @@ class ZoomCallController extends Controller {
  *
  * This method checks if there are any Zoom meetings scheduled for today and whether the user is invited to the meeting.
  * It also checks whether the meeting has started or is still upcoming, and returns the appropriate message.
+ * 
+ * parse(..., 'Europe/Riga') tells Carbon, to interpret this string as if its in the Europe/Riga timezone.
  *
  * @return \Illuminate\View\View
  */
