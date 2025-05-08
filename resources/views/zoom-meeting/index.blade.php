@@ -13,9 +13,8 @@
         @if ($zoomMeeting)
             <div class="zoom-header">
                 <h2>"{{ $zoomMeeting->title_zoom }}"</h2>
-                <p>Start Time: <span>{{ $zoomMeeting->start_time }}</span> - End
-                    Time:<span> {{ $zoomMeeting->end_time }}</span>
-                </p>
+                <p>Start Time: <span>{{ $zoomMeeting->start_time }}</span> - End Time:<span>
+                        {{ $zoomMeeting->end_time }}</span></p>
             </div>
 
             <div id="user-grid" class="user-grid">
@@ -35,12 +34,16 @@
                 @endif
             </div>
         @endif
-        <div class="zoom-buttons">
-            <button onclick="toggleCamera()" class="btn camera-btn">Camera</button>
-            <button onclick="toggleMic()" class="btn mic-btn">Mic</button>
-            <button onclick="leaveCall()" class="btn leave-btn">End/Leave call</button>
-        </div>
+
+        @if ($zoomMeeting && $zoomCalls->count() > 0)
+            <div class="zoom-buttons">
+                <button onclick="toggleCamera()" class="btn camera-btn">Camera</button>
+                <button onclick="toggleMic()" class="btn mic-btn">Mic</button>
+                <button onclick="leaveCall()" class="btn leave-btn">End/Leave call</button>
+            </div>
+        @endif
     </div>
+
 
     <main class="issues-zoom-call">
         <div class="container">
