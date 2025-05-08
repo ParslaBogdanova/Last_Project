@@ -137,6 +137,9 @@ class ZoomMeetingController extends Controller {
             'end_time' => $validateData['end_time'],
         ]);
     
+        // NOTE:
+        // Switched to sync() with additional pivot data to ensure proper update behavior.
+        // This ensures invited users are updated with the correct date and timestamp on every save.
         $syncData = [];
         foreach ($validateData['invited_users'] as $userId) {
             $syncData[$userId] = [
