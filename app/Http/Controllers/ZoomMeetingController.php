@@ -52,6 +52,13 @@ class ZoomMeetingController extends Controller {
         $end_time = $validatedData['end_time'];
     
         $unavailableUsers = $this->checkUserAvailability($invitedUsers, $date, $start_time, $end_time);
+
+        if (!empty($unavailableUsers)) {
+            return redirect()->back()
+                ->with('unavailable_users', $unavailableUsers)
+                ->withInput();
+        }
+
         
         $zoomMeeting = ZoomMeeting::create([
             'title_zoom' => $validatedData['title_zoom'],
@@ -129,6 +136,13 @@ class ZoomMeetingController extends Controller {
         $end_time = $validateData['end_time'];
     
         $unavailableUsers = $this->checkUserAvailability($invitedUsers, $date, $start_time, $end_time, $zoomMeeting->id);
+
+        if (!empty($unavailableUsers)) {
+            return redirect()->back()
+                ->with('unavailable_users', $unavailableUsers)
+                ->withInput();
+        }
+
     
         $zoomMeeting->update([
             'title_zoom' => $validateData['title_zoom'],
