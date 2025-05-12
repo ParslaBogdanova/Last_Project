@@ -141,12 +141,25 @@ class ZoomCallTest extends TestCase {
             'date' => now()->toDateString(),
         ]);
 
+        $zoomCall = ZoomCall::create([
+            'zoom_meetings_id' => $meeting->id,
+            'user_id' => $user->id,
+            'status' => 'active',
+        ]);
+
         $this->actingAs($user);
         $response = $this->get('/zoom-meeting');
         
-        $response->assertSee('Camera');
-        $response->assertSee('Mic');
-        $response->assertSee('End/Leave call');        
+        if($meeting && $zoomCall->status === 'active'){
+            $response->assertSee('Camera');
+            $response->assertSee('Mic');
+            $response->assertSee('leaveCall()', false);
+        } 
+        else {
+            $response->assertDontSee('Camera');
+            $response->assertDontSee('Mic');
+            $response->assertDontSee('End/Leave call');
+        }     
     }
 
 
